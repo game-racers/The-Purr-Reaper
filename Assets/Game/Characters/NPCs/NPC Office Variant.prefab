@@ -85,7 +85,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6657312498114634833, guid: 580d8953103cd664c8a8c7e3c21a2b91, type: 3}
       propertyPath: m_Name
-      value: NPC Office
+      value: NPC Office Variant
       objectReference: {fileID: 0}
     - target: {fileID: 6657312498114634833, guid: 580d8953103cd664c8a8c7e3c21a2b91, type: 3}
       propertyPath: m_IsActive
@@ -158,6 +158,10 @@ PrefabInstance:
     - target: {fileID: 7258934398473465636, guid: 580d8953103cd664c8a8c7e3c21a2b91, type: 3}
       propertyPath: m_IsKinematic
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7258934398473465639, guid: 580d8953103cd664c8a8c7e3c21a2b91, type: 3}
+      propertyPath: canAttack
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7258934398473465639, guid: 580d8953103cd664c8a8c7e3c21a2b91, type: 3}
       propertyPath: canWander

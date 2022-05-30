@@ -12,9 +12,6 @@ EditorBuildSettings:
     path: Assets/Scenes/Main Level.unity
     guid: 5f56d9b1d69a2ff449bb9fa59ff1f534
   - enabled: 1
-    path: Assets/Scenes/Test Scene.unity
-    guid: 9fc0d4010bbf28b4594072e72b8655ab
-  - enabled: 1
     path: Assets/Scenes/TargetDeathScene.unity
     guid: 4550260dcd74fd84bb4b00decb174231
   m_configObjects: {}
