@@ -166,7 +166,7 @@ namespace gameracers.Control
         public void UpdatePossessionEnd()
         {
             // T to leave (temporarily)
-            if (possessed != null && Input.GetKeyDown(KeyCode.T))
+            if (possessed != null && Input.GetKeyDown(KeyCode.F))
             {
                 leaveBody = true;
                 // Animation starts, timer is for the material
