@@ -1,5 +1,33 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &360076893
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 752421070593695276}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c77079d23e16fa94aaf2503877c26255, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 2
+  maxSpeed: 8
+--- !u!114 &360076905
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 752421070593695276}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbdde1b597443504fa2ce22ea0113c44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timeBetweenAttacks: 1
+  foot: {fileID: 0}
 --- !u!114 &3633229498257464327
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -31,19 +59,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6280365189339840235, guid: 580d8953103cd664c8a8c7e3c21a2b91, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 9.964715
+      value: -4.9679976
       objectReference: {fileID: 0}
     - target: {fileID: 6280365189339840235, guid: 580d8953103cd664c8a8c7e3c21a2b91, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 6.700001
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6280365189339840235, guid: 580d8953103cd664c8a8c7e3c21a2b91, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -13.724992
+      value: 8.884453
       objectReference: {fileID: 0}
     - target: {fileID: 6280365189339840235, guid: 580d8953103cd664c8a8c7e3c21a2b91, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.9566638
       objectReference: {fileID: 0}
     - target: {fileID: 6280365189339840235, guid: 580d8953103cd664c8a8c7e3c21a2b91, type: 3}
       propertyPath: m_LocalRotation.x
@@ -51,7 +79,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6280365189339840235, guid: 580d8953103cd664c8a8c7e3c21a2b91, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0.29119492
       objectReference: {fileID: 0}
     - target: {fileID: 6280365189339840235, guid: 580d8953103cd664c8a8c7e3c21a2b91, type: 3}
       propertyPath: m_LocalRotation.z
@@ -63,7 +91,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6280365189339840235, guid: 580d8953103cd664c8a8c7e3c21a2b91, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 33.859
       objectReference: {fileID: 0}
     - target: {fileID: 6280365189339840235, guid: 580d8953103cd664c8a8c7e3c21a2b91, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -93,6 +121,14 @@ PrefabInstance:
       propertyPath: shirts.Array.data[0]
       value: 
       objectReference: {fileID: 3911321391478906605, guid: 1092180cd3c548143af830c9ce9502a0, type: 3}
+    - target: {fileID: 7258934398473465639, guid: 580d8953103cd664c8a8c7e3c21a2b91, type: 3}
+      propertyPath: canIdle
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7258934398473465639, guid: 580d8953103cd664c8a8c7e3c21a2b91, type: 3}
+      propertyPath: sprintSpeed
+      value: 8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 580d8953103cd664c8a8c7e3c21a2b91, type: 3}
 --- !u!1 &752421070593695276 stripped

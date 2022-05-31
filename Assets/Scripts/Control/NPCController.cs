@@ -55,7 +55,7 @@ namespace gameracers.Control
         bool aggravate = false;
         [SerializeField] bool isWitness = false;
         float attackTimer = 1f;
-        Vector3 lastKnownPos = Vector3.zero;
+        Vector3 lastKnownPos;
         [SerializeField] bool trespass = false;
         [SerializeField] Transform evacuationPoint;
 
@@ -121,7 +121,7 @@ namespace gameracers.Control
             }
             if (aggravate && canAttack)
             {
-                if (lastKnownPos != Vector3.zero)
+                if (lastKnownPos != null)
                 {
                     GetComponent<ActionScheduler>().CancelCurrentAction();
                     mover.StartMoveAction(lastKnownPos, sprintSpeed);
@@ -312,7 +312,7 @@ namespace gameracers.Control
 
         private void PeacefulPanic()
         {
-            if (AtTargetPoint(lastKnownPos))
+            if (AtTargetPoint(evacuationPoint.position))
             {
                 mover.Cancel();
                 if (timeOfPanic > peacefulPanicDuration)
@@ -324,7 +324,7 @@ namespace gameracers.Control
             }
             timeOfPanic = 0f;
             GetComponent<ActionScheduler>().CancelCurrentAction();
-            mover.StartMoveAction(lastKnownPos, sprintSpeed);
+            mover.StartMoveAction(evacuationPoint.position, sprintSpeed);
         }
 
         void RunAway()

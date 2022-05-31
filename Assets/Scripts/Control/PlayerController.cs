@@ -35,6 +35,7 @@ namespace gameracers.Control
         float possessTimer = Mathf.Infinity;
         GameObject possessed = null;
         [SerializeField] bool leaveBody = false;
+        bool possessing = false;
 
         // Violence
         [SerializeField] float damage = 1f;
@@ -132,6 +133,7 @@ namespace gameracers.Control
                                 SetSkin(0, ghostMat);
                                 GetComponent<Animator>().SetBool("isPossess", true);
                                 transform.LookAt(possessed.transform.position);
+                                possessing = true;
                             }
                         }
                     }
@@ -160,11 +162,14 @@ namespace gameracers.Control
                 var vcam = GameObject.Find("Third Person Camera").GetComponent<Cinemachine.CinemachineFreeLook>();
                 vcam.Follow = possessed.transform;
                 vcam.LookAt = possessed.transform;
+                possessing = false;
             }
         }
 
         public void UpdatePossessionEnd()
         {
+            if (possessing == true) return;
+
             // T to leave (temporarily)
             if (possessed != null && Input.GetKeyDown(KeyCode.F))
             {
