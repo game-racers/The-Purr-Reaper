@@ -56,7 +56,7 @@ namespace gameracers.NPCStuff
                     if (!Physics.Raycast(transform.position, directionToTarget, distanceToTarget, obstructionMask))
                     {
                         canSeePlayer = true;
-                        isCatEvil = playerRef.GetComponent<PlayerController>().getForm();
+                        isCatEvil = playerRef.GetComponent<PlayerBrain>().getForm();
                     }
                     else
                         canSeePlayer = false;

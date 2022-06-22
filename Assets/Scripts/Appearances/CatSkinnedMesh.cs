@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace gameracers.NPCStuff
+namespace gameracers.Appearances
 { 
-    public class ClothSkinnedMesh : MonoBehaviour
+    public class CatSkinnedMesh : MonoBehaviour
     {
         SkinnedMeshRenderer skinnedMeshPrefab;
         SkinnedMeshRenderer originalSkin;
@@ -13,8 +13,8 @@ namespace gameracers.NPCStuff
         void Start()
         {
             skinnedMeshPrefab = gameObject.GetComponent<SkinnedMeshRenderer>();
-            originalSkin = gameObject.transform.parent.Find("Human").GetComponent<SkinnedMeshRenderer>();
-            rootBone = gameObject.transform.parent.Find("Human").GetComponent<ClothSkinnedMesh>().rootBone;
+            originalSkin = gameObject.transform.parent.Find("Demon Cat").GetComponent<SkinnedMeshRenderer>();
+            rootBone = gameObject.transform.parent.Find("Demon Cat").GetComponent<CatSkinnedMesh>().rootBone;
 
             skinnedMeshPrefab.bones = originalSkin.bones;
             skinnedMeshPrefab.rootBone = rootBone;

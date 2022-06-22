@@ -1,25 +1,16 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using gameracers.Control;
 using gameracers.Core;
-using gameracers.Stats;
 
 namespace gameracers.Movement
 {
     public class NPCMover : MonoBehaviour, IAction
     {
-        [SerializeField] float moveSpeed = 2f;
-        [SerializeField] float maxSpeed = 8f;
-        float sprintMod = 1f;
         NavMeshAgent navMeshAgent;
-        Health health;
 
         void Awake()
         {
             navMeshAgent = GetComponent<NavMeshAgent>();
-            health = GetComponent<Health>();
         }
 
         void Update()

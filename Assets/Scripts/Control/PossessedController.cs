@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using gameracers.Stats;
 using gameracers.Movement;
+using gameracers.Combat;
 using UnityEngine.AI;
 
 namespace gameracers.Control
@@ -122,9 +123,9 @@ namespace gameracers.Control
             }
         }
 
-        public Transform GetSpawnPoint()
+        public Vector3 GetSpawnPoint()
         {
-            return spawnPoint;
+            return spawnPoint.position;
         }    
 
         // Animator actions

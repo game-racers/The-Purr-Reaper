@@ -1,8 +1,9 @@
 using gameracers.Control;
 using UnityEngine;
 using UnityEngine.UI;
+using gameracers.Stats;
 
-namespace gameracers.Stats
+namespace gameracers.UI
 {
     public class HealthDisplay : MonoBehaviour
     {
@@ -50,7 +51,7 @@ namespace gameracers.Stats
                 }
             }
 
-            if (health.GetComponent<PlayerController>().getForm())
+            if (health.GetComponent<PlayerBrain>().getForm())
             {
                 demonPic.enabled = true;
                 livingPic.enabled = false;
