@@ -10,6 +10,7 @@ namespace gameracers.NPCStuff
         public PatrolPath newPath = null;
         public Transform newIdle = null;
         public Transform evacPoint = null;
+        public float moveSpeed = 6f;
         public float newAngle = 100;
         public float newFOVRadius = 10f;
         public bool newCanWander = false;
