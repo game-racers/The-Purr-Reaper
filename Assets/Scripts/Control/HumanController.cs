@@ -6,6 +6,7 @@ using gameracers.Stats;
 using gameracers.NPCStuff;
 using gameracers.Core;
 using gameracers.Combat;
+using gameracers.Appearances;
 
 namespace gameracers.Control
 {
@@ -17,9 +18,15 @@ namespace gameracers.Control
         FieldOfView fov;
         GameObject player;
 
-        // Movement
-        [SerializeField] float moveSpeed = 2f;
-        [SerializeField] float sprintSpeed = 8f;
+        [SerializeField] HumanDataSO humanClass;
+
+        // Human Class controlled Data
+            // Movement
+        float moveSpeed = 2f;
+        float sprintSpeed = 8f;
+            // Aggro
+        bool canAttack = false;
+        bool isGuard;
 
         // Wander Radius and Return
         [SerializeField] public bool canWander = false;
@@ -40,9 +47,6 @@ namespace gameracers.Control
         float arrivalTime;
 
         // Aggro
-        [SerializeField] bool canAttack = false;
-        [SerializeField] float attackRadius = 4f;
-        [SerializeField] float damage = 1f;
         [SerializeField] float shoutDistance = 10f;
         bool aggravate = false;
         float chaseTime;
@@ -69,11 +73,19 @@ namespace gameracers.Control
 
             humanPos = transform.position;
             originalRot = transform.rotation;
+
+            // Initialize HumanClass stuff
+            GetComponent<ClothingEquip>().initClothes(humanClass.hats, humanClass.shirts, humanClass.pants, humanClass.ties);
+            health.SetHealth(humanClass.health);
+            moveSpeed = humanClass.moveSpeed;
+            sprintSpeed = humanClass.sprintSpd;
+            canAttack = humanClass.canAttack;
+            isGuard = humanClass.isGuard;
         }
 
         private void Start()
         {
-            fighter.InitFighter(attackRadius, damage);
+            
         }
 
         void Update()
@@ -280,9 +292,9 @@ namespace gameracers.Control
             RaycastHit[] hits = Physics.SphereCastAll(transform.position, shoutDistance, Vector3.up, 0);
             foreach (RaycastHit hit in hits)
             {
-                if (hit.collider.GetComponent<NPCController>() != null)
+                if (hit.collider.GetComponent<HumanController>() != null)
                 {
-                    NPCController ai = hit.collider.GetComponent<NPCController>();
+                    HumanController ai = hit.collider.GetComponent<HumanController>();
                     if (ai.enabled == false) continue;
                     if (ai.GetComponent<Health>().GetDead() == true) continue;
 
@@ -294,12 +306,11 @@ namespace gameracers.Control
         // Animator Events
         void Hit()
         {
-            //foot.WeaponHit();
+
         }
 
         void StopHit()
         {
-            // foot.WeaponStopHit();
             chaseTime = Time.time;
             GetComponent<ActionScheduler>().CancelCurrentAction();
         }

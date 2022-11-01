@@ -11,26 +11,29 @@ namespace gameracers.Combat
     {
         [SerializeField] float timeBetweenAttacks = 1f;
         Health target;
-        float timeSinceLastAttack = Mathf.Infinity;
-        [SerializeField] Weapon foot;
+        float timeSinceLastAttack = -5f;
+        [SerializeField] WeaponDataSO weaponData;
+        [SerializeField] Transform rightHandTransform;
+        [SerializeField] Transform weaponHolster;
+        Weapon heldWeapon;
+        Weapon holsteredWeapon;
         float weaponRange = 4f;
-        float damage = 1f;
 
-        public void InitFighter(float range, float damage)
+        private void Start()
         {
-            this.weaponRange = range;
-            this.damage = damage;
+            weaponRange = weaponData.weaponRange;
+            heldWeapon = Spawn(weaponData.equipPrefab, rightHandTransform, false);
+            holsteredWeapon = Spawn(weaponData.equipPrefab, weaponHolster, true);
         }
 
-        // Update is called once per frame
         void Update()
         {
-            timeSinceLastAttack += Time.deltaTime;
+            if (Time.time - timeSinceLastAttack < timeBetweenAttacks) return;
 
             if (target != null)
             {
                 if (target.GetDead()) return;
-                //problem
+
                 if (!IsInRange(target.gameObject.transform))
                 {
                     GetComponent<NPCMover>().MoveTo(target.transform.position, 8f);
@@ -43,13 +46,21 @@ namespace gameracers.Combat
             }
         }
 
+        private Weapon Spawn(GameObject weapon, Transform location, bool visible)
+        {
+            GameObject spawnnedWeapon = Instantiate(weapon, location);
+            spawnnedWeapon.SetActive(visible);
+            return spawnnedWeapon.GetComponent<Weapon>();
+        }
+
         private void AttackBehaviour()
         {
             transform.LookAt(target.transform);
-            if (timeSinceLastAttack > timeBetweenAttacks)
+
+            if (Time.time - timeSinceLastAttack > timeBetweenAttacks)
             {
                 TriggerAttack();
-                timeSinceLastAttack = 0f;
+                timeSinceLastAttack = Time.time;
             }
         }
 
@@ -62,12 +73,19 @@ namespace gameracers.Combat
         // Animation event
         void Hit()
         {
-            foot.WeaponHit();
+            heldWeapon.WeaponHit();
         }
 
         void StopHit()
         {
-            foot.WeaponStopHit();
+            heldWeapon.WeaponStopHit();
+        }
+
+        void DrawWeapon()
+        {
+            heldWeapon.gameObject.SetActive(true);
+            holsteredWeapon.gameObject.SetActive(false);
+            GetComponent<Animator>().SetBool("agro", false);
         }
 
         private bool IsInRange(Transform targetTransform)
@@ -88,6 +106,10 @@ namespace gameracers.Combat
 
         public void Attack(GameObject combatTarget)
         {
+            if (heldWeapon.gameObject.activeSelf == false)
+            {
+                GetComponent<Animator>().SetBool("agro", true);
+            }
             GetComponent<ActionScheduler>().StartAction(this);
             target = combatTarget.GetComponent<Health>();
         }

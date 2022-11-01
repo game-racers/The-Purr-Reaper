@@ -636,7 +636,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0d68cdcb6babc14a8bdb1416b6dc68d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 1
+  weapon: {fileID: 11400000, guid: fa1a29ce6cd27724f92de6c00364f300, type: 2}
 --- !u!65 &3892607854509178007
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1398,13 +1398,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0e9d275e9bc3a84ea19e82acb6d6474, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hats:
-  - {fileID: 2107680757814099117, guid: 2f204a64a2c64b947b5a94a6afa6ecca, type: 3}
-  shirts:
-  - {fileID: 4105540825491962590, guid: 6eb7dc40660b9fe4d99caafbebeeab84, type: 3}
-  pants:
-  - {fileID: 628963328740584905, guid: a4cefba493489084bbc676e5005e124f, type: 3}
-  ties: []
   neckBone: {fileID: 6571665120912942752}
 --- !u!114 &5352526456070405130
 MonoBehaviour:
@@ -1492,8 +1485,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c77079d23e16fa94aaf2503877c26255, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 2
-  maxSpeed: 8
 --- !u!114 &744885675
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1509,6 +1500,7 @@ MonoBehaviour:
   newPath: {fileID: 0}
   newIdle: {fileID: 0}
   evacPoint: {fileID: 0}
+  moveSpeed: 6
   newAngle: 200
   newFOVRadius: 10
   newCanWander: 0
@@ -1525,7 +1517,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timeBetweenAttacks: 1
-  foot: {fileID: 3892607854509178004}
+  weapon: {fileID: 0}
+  rightHandTransform: {fileID: 0}
+  weaponHolster: {fileID: 0}
 --- !u!1 &7165425342323587854
 GameObject:
   m_ObjectHideFlags: 0

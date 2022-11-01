@@ -61,10 +61,10 @@ namespace gameracers.Movement
 
         private void UpdateMovement()
         {
-            float horiz = Input.GetAxisRaw("Horizontal");
-            float vert = Input.GetAxisRaw("Vertical");
+            float horiz = Input.GetAxis("Horizontal");
+            float vert = Input.GetAxis("Vertical");
 
-            direction = new Vector3(horiz, 0f, vert).normalized;
+            direction = new Vector3(horiz, 0f, vert);
 
             if (Input.GetKeyDown(KeyCode.LeftShift))
             {
@@ -82,7 +82,7 @@ namespace gameracers.Movement
                 transform.rotation = Quaternion.Euler(0f, angle, 0f);
 
                 Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
-                charController.Move(moveDir.normalized * speed * sprintSpd * Time.deltaTime);
+                charController.Move(moveDir.normalized * speed * sprintSpd * direction.magnitude * Time.deltaTime);
             }
         }
 

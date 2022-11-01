@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0bf62c27a09326d40a8dbed9be7f1bf9, type: 3}
+  m_Name: Security
+  m_EditorClassIdentifier: 
+  health: 1
+  moveSpeed: 2
+  sprintSpd: 8
+  canAttack: 1
+  isGuard: 1
+  hats:
+  - {fileID: 8083620724307675805, guid: 2da6f826f070d5c4fa8a7256cb307a48, type: 3}
+  shirts:
+  - {fileID: 6561355341983173117, guid: 1092180cd3c548143af830c9ce9502a0, type: 3}
+  pants:
+  - {fileID: 3255377083018559352, guid: bca91591ee9766a478068f1371de6d83, type: 3}
+  ties:
+  - {fileID: 2145072138013023504, guid: db1165da961ac6f4fa1003de1c55f7a5, type: 3}

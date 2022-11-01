@@ -12,7 +12,7 @@ namespace gameracers.Control
     {
         [SerializeField] RuntimeAnimatorController animController;
         [SerializeField] bool isPossessed = false;
-        [SerializeField] Transform spawnPoint;
+        Transform spawnPoint;
 
         // Movement
         [SerializeField] float deadSpeedMod = 100f;
@@ -34,12 +34,17 @@ namespace gameracers.Control
         float timeSinceLastAttack = Mathf.Infinity;
         [SerializeField] bool isAttack = false;
 
+        private void Awake()
+        {
+            spawnPoint = gameObject.transform.Find("SpawnPoint");
+        }
+
         void Start()
         {
             GetComponent<Animator>().runtimeAnimatorController = animController;
             mover = GetComponent<NPCMover>();
             health = GetComponent<Health>();
-            foot.damage = damage;
+            //foot.damage = damage;
             cam = GameObject.Find("Main Camera").transform;
         }
 
@@ -131,12 +136,11 @@ namespace gameracers.Control
         // Animator actions
         void Hit()
         {
-            foot.WeaponHit();
+
         }
 
         void StopHit()
         {
-            foot.WeaponStopHit();
             isAttack = false;
         }
     }

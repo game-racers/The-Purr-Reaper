@@ -26,7 +26,6 @@ namespace gameracers.NPCStuff
         private void Start()
         {
             playerRef = GameObject.FindGameObjectWithTag("Player");
-            //StartCoroutine(FOVRoutine());
         }
 
         private IEnumerator FOVRoutine()
@@ -85,9 +84,11 @@ namespace gameracers.NPCStuff
 
                         if (!Physics.Raycast(transform.position, directionToTarget, distanceToTarget, obstructionMask))
                         {
+                            if (GameObject.ReferenceEquals(npc.gameObject, gameObject)) return;
+
                             if (npc.gameObject.GetComponent<Health>().GetDead())
                             {
-                                if (npc.gameObject.GetComponent<NPCController>().enabled == true)
+                                if (npc.gameObject.GetComponent<HumanController>().enabled == true)
                                 {
                                     seesDead = true;
                                 }

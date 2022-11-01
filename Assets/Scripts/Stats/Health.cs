@@ -17,19 +17,6 @@ namespace gameracers.Stats
             health = maxHealth;
         }
 
-        public void TakeDamage(float damage)
-        {
-            health -= damage;
-            if (health <= 0)
-            {
-                Die();
-            }
-            if (health <= -1f)
-            {
-                VeryDead();
-            }
-        }
-
         private void Die()
         {
             if (isDead) return;
@@ -45,6 +32,25 @@ namespace gameracers.Stats
 
             isVeryDead = true;
             GetComponent<Animator>().SetTrigger("die");
+        }
+
+        public void SetHealth(float newHealth)
+        {
+            maxHealth = newHealth;
+            health = maxHealth;
+        }
+
+        public void TakeDamage(float damage)
+        {
+            health -= damage;
+            if (health <= 0)
+            {
+                Die();
+            }
+            if (health <= -1f)
+            {
+                VeryDead();
+            }
         }
 
         public void Heal()

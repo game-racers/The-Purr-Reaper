@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0bf62c27a09326d40a8dbed9be7f1bf9, type: 3}
+  m_Name: Target
+  m_EditorClassIdentifier: 
+  health: 1
+  moveSpeed: 2
+  sprintSpd: 8
+  canAttack: 0
+  hats:
+  - {fileID: 7780713905560166853, guid: 9af08bc7e00306147b71aef1d3b346fc, type: 3}
+  shirts:
+  - {fileID: 5858651057154854578, guid: 8b5a99010c6a1164fb8cc1fbfd852276, type: 3}
+  pants:
+  - {fileID: 3255377083018559352, guid: bca91591ee9766a478068f1371de6d83, type: 3}
+  ties:
+  - {fileID: 3137516536654341265, guid: 83010d45089bafa4b8466cda6b4b53c7, type: 3}

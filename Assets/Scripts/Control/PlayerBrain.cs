@@ -99,7 +99,7 @@ namespace gameracers.Control
                 transform.position = new Vector3(0f, -10f, 0f);
                 GetComponent<CharacterController>().enabled = true;
             }
-            possessedEntity.GetComponent<NPCController>().enabled = !enabled;
+            possessedEntity.GetComponent<HumanBrain>().enabled = !enabled;
             possessedEntity.GetComponent<PossessedController>().enabled = enabled;
             possessedEntity.GetComponent<PossessedController>().PossessState(enabled);
             canPossess = !enabled;

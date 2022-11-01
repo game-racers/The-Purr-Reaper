@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0bf62c27a09326d40a8dbed9be7f1bf9, type: 3}
+  m_Name: Construction
+  m_EditorClassIdentifier: 
+  health: 1
+  moveSpeed: 2
+  sprintSpd: 8
+  canAttack: 1
+  isGuard: 0
+  hats:
+  - {fileID: 6236127466189372280, guid: 2f204a64a2c64b947b5a94a6afa6ecca, type: 3}
+  shirts:
+  - {fileID: 7821142460702420948, guid: 6eb7dc40660b9fe4d99caafbebeeab84, type: 3}
+  pants:
+  - {fileID: 3255377083018559352, guid: bca91591ee9766a478068f1371de6d83, type: 3}
+  - {fileID: 1807805625482193716, guid: 2e2e0f27a4d1b884fb15829009bfa3a5, type: 3}
+  - {fileID: 8802288418776661765, guid: a4cefba493489084bbc676e5005e124f, type: 3}
+  ties: []

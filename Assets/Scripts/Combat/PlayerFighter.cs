@@ -7,14 +7,12 @@ namespace gameracers.Combat
 {
     public class PlayerFighter : MonoBehaviour
     {
-        [SerializeField] float damage = 1f;
         [SerializeField] float attackDuration = 1f;
         [SerializeField] Weapon scythe;
         float timeSinceLastAttack;
 
         void Start()
         {
-            scythe.damage = damage;
             timeSinceLastAttack = Time.time;
         }
 
