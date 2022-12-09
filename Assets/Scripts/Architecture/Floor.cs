@@ -8,6 +8,7 @@ namespace gameracers.Architecture
     {
         [SerializeField] int floorID = 1;
         List<HidingSpot> hidingSpots = new List<HidingSpot>();
+        List<DemonAlertButton> demonButtons = new List<DemonAlertButton>();
 
         private void Awake()
         {
@@ -15,6 +16,8 @@ namespace gameracers.Architecture
             {
                 if (child.GetComponent<HidingSpot>() != null)
                     hidingSpots.Add(child.GetComponent<HidingSpot>());
+                if (child.GetComponent<DemonAlertButton>() != null)
+                    demonButtons.Add(child.GetComponent<DemonAlertButton>());
             }
         }
 
@@ -44,6 +47,11 @@ namespace gameracers.Architecture
         public List<HidingSpot> GetHidingSpots()
         {
             return hidingSpots;
+        }
+
+        public List<DemonAlertButton> GetDemonButtons()
+        {
+            return demonButtons;
         }
     }
 }

@@ -47,7 +47,7 @@ namespace gameracers.Abilities
                 {
                     foreach (Collider hit in hits)
                     {
-                        if (hit.gameObject.GetComponent<Health>().GetDead() && hit.gameObject.GetComponent<Health>().GetVeryDead() == false)
+                        if (hit.gameObject.GetComponent<Health>().GetDead())
                         {
                             possessed = hit.gameObject;
                             possessTimer = Time.time;

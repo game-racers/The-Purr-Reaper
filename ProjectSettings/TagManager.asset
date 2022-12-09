@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Human
   - Building
+  - Demon Button
   layers:
   - Default
   - TransparentFX

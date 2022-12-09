@@ -9,12 +9,22 @@ namespace gameracers.Stats
     {
         [SerializeField] float maxHealth = 1f;
         [SerializeField] float health;
+        bool isKO = false;
         bool isDead = false;
-        bool isVeryDead = false;
 
         private void Start()
         {
             health = maxHealth;
+        }
+
+        private void KnockOut()
+        {
+            if (isDead) return;
+            if (isKO) return;
+            Debug.Log("I am asleep");
+            isKO = true;
+            GetComponent<Animator>().SetTrigger("die");
+            GetComponent<ActionScheduler>().CancelCurrentAction();
         }
 
         private void Die()
@@ -22,16 +32,9 @@ namespace gameracers.Stats
             if (isDead) return;
 
             isDead = true;
+            isKO = false;
             GetComponent<Animator>().SetTrigger("die");
             GetComponent<ActionScheduler>().CancelCurrentAction();
-        }
-
-        private void VeryDead()
-        {
-            if (isVeryDead) return;
-
-            isVeryDead = true;
-            GetComponent<Animator>().SetTrigger("die");
         }
 
         public void SetHealth(float newHealth)
@@ -45,28 +48,29 @@ namespace gameracers.Stats
             health -= damage;
             if (health <= 0)
             {
-                Die();
+                KnockOut();
             }
-            if (health <= -1f)
+            if (health <= -1)
             {
-                VeryDead();
+                Die();
             }
         }
 
         public void Heal()
         {
             health = maxHealth;
+            isKO = false;
             isDead = false;
+        }
+
+        public bool GetKO()
+        {
+            return isKO;
         }
 
         public bool GetDead()
         {
             return isDead;
-        }
-
-        public bool GetVeryDead()
-        {
-            return isVeryDead;
         }
 
         public float GetHealthPoints()

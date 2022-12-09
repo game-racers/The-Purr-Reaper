@@ -34,7 +34,6 @@ namespace gameracers.Movement
             charController = GetComponent<CharacterController>();
         }
 
-        // Update is called once per frame
         public void UpdateMover(bool isAttack)
         {
             if (isAttack == false)

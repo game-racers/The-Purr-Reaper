@@ -10,6 +10,9 @@ public class EventListener : MonoBehaviour
     public delegate void OnNewFloor(GameObject entity, GameObject floor, bool isEnter);
     public static event OnNewFloor onNewFloor;
 
+    public delegate void OnDemonButton(int buttonID);
+    public static event OnDemonButton onDemonButton;
+
     public static void CrossBuilding(GameObject entity, GameObject building, bool isEnter)
     {
         if (onCrossThreshold != null)
@@ -21,4 +24,10 @@ public class EventListener : MonoBehaviour
         if (onNewFloor != null)
             onNewFloor(entity, floor, isEnter);
     }
+
+    public static void DemonButton(int buttonID)
+    {
+        if (onDemonButton != null)
+            onDemonButton(buttonID);
+    }            
 }

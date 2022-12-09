@@ -51,35 +51,41 @@ namespace gameracers.Control
         // Aggro
         [SerializeField] float shoutDistance = 10f;
         bool aggravate = false;
-        float chaseTime;
         Vector3 lastKnownPos;
         bool isWitness = false;
         [SerializeField] Transform evacPoint;
         Vector3 hidePoint = Vector3.zero;
-        bool canRunAway = false;
-        [SerializeField] float peaceAggroRad = 10f;
-        Vector3 peaceAggroReturn;
-        [SerializeField] LayerMask hideMask;
         List<HidingSpot> floorSpots = new List<HidingSpot>();
 
-        float demonCatSightTimer;
+        float demonCatSightTimer = -Mathf.Infinity;
         [SerializeField] float demonCatSightTimerMax = 10f;
 
         Vector3 humanPos;
         int currentWaypointIndex = 0;
         GameObject myBuilding;
-        int myFloor = 0;
+        Floor myFloor;
+
+        GameObject unconsciousBody = null;
+        float wakeUpTime = -Mathf.Infinity;
+        [SerializeField] float wakeUpDelay = 5f;
+
+        bool hasBeenFound = false;
+        float foundTimer;
+        bool demonAlert = false;
+        DemonAlertButton toButton;
 
         private void OnEnable()
         {
             EventListener.onCrossThreshold += CatEnteredBuilding;
             EventListener.onNewFloor += FloorChange;
+            EventListener.onDemonButton += SetDemonAlert;
         }
 
         private void OnDisable()
         {
             EventListener.onCrossThreshold -= CatEnteredBuilding;
             EventListener.onNewFloor -= FloorChange;
+            EventListener.onDemonButton -= SetDemonAlert;
         }
 
         private void CatEnteredBuilding(GameObject Entity, GameObject building, bool isEnter)
@@ -89,7 +95,7 @@ namespace gameracers.Control
                 if (GameObject.ReferenceEquals(Entity, gameObject))
                 {
                     myBuilding = null;
-                    myFloor = 0;
+                    myFloor = null;
                 }
                 return;
             }
@@ -126,9 +132,17 @@ namespace gameracers.Control
 
             if (isEnter == true)
             {
-                floorSpots = floor.GetComponent<Floor>().GetHidingSpots();
-                myFloor = floor.GetComponent<Floor>().GetFloorID();
+                myFloor = floor.GetComponent<Floor>();
+                floorSpots = myFloor.GetHidingSpots();
             }
+        }
+
+        private void SetDemonAlert(int id)
+        {
+            // add timer implementation for slight randomness of preparedness in people. 
+            Aggravate();
+            demonAlert = true;
+            toButton = null;
         }
 
         void Awake()
@@ -157,7 +171,21 @@ namespace gameracers.Control
 
         void Update()
         {
-            if (health.GetDead()) return;
+            if (health.GetDead())
+            {
+                if (hasBeenFound) return;
+                if (foundTimer == 0f) return;
+                if (Time.time - foundTimer > 60f) hasBeenFound = true;
+                return;
+            }
+
+            if (health.GetKO())
+            {
+                return;
+            }
+
+            if (Time.time - wakeUpTime < wakeUpDelay)
+                return;
 
             fov.FieldOfViewCheck();
 
@@ -174,26 +202,13 @@ namespace gameracers.Control
                     return;
                 }
 
-                // Human sees dead human
-                if (fov.CanSeeDead())
-                {
-                    SetWitness();
-                    Aggravate();
-                    AggravateNearbyEnemies();
-                    moveSpeed = sprintSpeed;
-                    isWitness = true;
-                    if (GetComponent<NPCWitness>() != null)
-                    {
-                        SetWitness();
-                    }
-                }
-
                 Work();
                 return;
             }
 
             if (aggravate == true)
             {
+
                 // Panic
                 if (isGuard == false)
                 {
@@ -208,12 +223,26 @@ namespace gameracers.Control
                         else
                         {
                             SetWitness();
+                            if (demonAlert == false)
+                            {
+                                PullDemonSwitch();
+
+                            }
+                            if (toButton != null) return;
                             PeacefulPanic();
                             return;
                         }
                     }
                     else
+                    {
+                        if (demonAlert == false)
+                        {
+                            PullDemonSwitch();
+
+                        }
+                        if (toButton != null) return;
                         PeacefulPanic();
+                    }
 
                     return;
                 }
@@ -234,6 +263,27 @@ namespace gameracers.Control
                     }
                     else
                     {
+                        if (fov.CanSeeKO())
+                        {
+                            if (unconsciousBody == null)
+                                unconsciousBody = fov.GetBody();
+
+                            if (unconsciousBody != null)
+                                mover.StartMoveAction(unconsciousBody.transform.position, sprintSpeed);
+
+                            if (AtTargetPoint(unconsciousBody.transform.position))
+                            {
+                                // trigger animation
+                                unconsciousBody.GetComponent<HumanBrain>().Heal();
+                                unconsciousBody = null;
+                            }
+                            return;
+                        }
+                        if (fov.CanSeeDead() && !fov.IsAccounted())
+                        {
+                            SetWanderArea(transform.position);
+                            Wander();
+                        }
                         if (!fov.GetPlayerVisibility() || !fov.GetCatForm())
                         {
                             SetWitness();
@@ -246,6 +296,17 @@ namespace gameracers.Control
 
         private void CheckForDead()
         {
+            if (fov.CanSeeKO())
+            {
+                Aggravate();
+                AggravateNearbyEnemies();
+                moveSpeed = sprintSpeed;
+                GetComponent<ActionScheduler>().CancelCurrentAction();
+                Debug.Log(unconsciousBody);
+                if (unconsciousBody != null)
+                    mover.StartMoveAction(unconsciousBody.transform.position, sprintSpeed);
+            }
+
             if (fov.CanSeeDead() && isWitness == false)
             {
                 Aggravate();
@@ -308,6 +369,12 @@ namespace gameracers.Control
             }
         }
 
+        private void SetWanderArea(Vector3 center)
+        {
+            wanderTarget = center;
+            wanderCenter = center;
+        }
+
         private void PatrolBehaviour()
         {
             Vector3 nextPos = humanPos;
@@ -367,6 +434,9 @@ namespace gameracers.Control
                 Destroy(gameObject);
                 return;
             }
+
+            
+
             if (hidePoint != null)
             {
                 if (AtTargetPoint(hidePoint))
@@ -422,7 +492,6 @@ namespace gameracers.Control
 
                 if (tempHidePoint == new Vector3())
                 {
-                    Debug.Log("just flippin' run away");
                     Vector3 runAwayPoint = new Vector3(transform.position.x - player.transform.position.x, transform.position.y, transform.position.z - player.transform.position.z);
                     mover.StartMoveAction(runAwayPoint, sprintSpeed);
                     hidePoint = Vector3.zero;
@@ -450,7 +519,7 @@ namespace gameracers.Control
                     return;
                 }
 
-                Vector3 tempHidePoint = floorSpots[0].transform.position;
+                Vector3 tempHidePoint = floorSpots[0].GetPoint();
                 float distToHide = Vector3.Distance(transform.position, floorSpots[0].transform.position);
                 float tempDist;
 
@@ -459,7 +528,6 @@ namespace gameracers.Control
                     tempDist = Vector3.Distance(floorSpots[i].transform.position, transform.position);
                     if (tempDist < distToHide)
                     {
-                        Debug.Log("GetPoint!");
                         tempHidePoint = floorSpots[i].GetPoint();
                         distToHide = tempDist; 
                     }
@@ -468,6 +536,45 @@ namespace gameracers.Control
                 // Go to safe room
                 hidePoint = tempHidePoint;
                 mover.StartMoveAction(hidePoint, sprintSpeed);
+            }
+        }
+
+        private void PullDemonSwitch()
+        {
+            if (myFloor.GetFloorID() != 0)
+            {
+                if (toButton != null)
+                {
+                    if (AtTargetPoint(toButton.transform.position))
+                    {
+                        //GetComponent<Animator>().SetTrigger("pullSwitch");
+                        //Set Collider on pull animation to test collision for buttons. Make collider huuuuuuge
+                        EventListener.DemonButton(toButton.GetButtonID());
+                        toButton = null;
+                    }
+                    return;
+                }
+
+                List<DemonAlertButton> demonButtons = myFloor.GetDemonButtons();
+                if (demonButtons.Count == 0)
+                {
+                    return;
+                }
+
+                toButton = demonButtons[0];
+                float toButtonDist = Vector3.Distance(transform.position, toButton.transform.position);
+                float tempDist;
+
+                for (int i = 1; i < demonButtons.Count; i++)
+                {
+                    tempDist = Vector3.Distance(transform.position, demonButtons[i].transform.position);
+                    if (tempDist < toButtonDist)
+                    {
+                        toButton = demonButtons[i];
+                        toButtonDist = tempDist;
+                    }
+                }
+                mover.StartMoveAction(toButton.transform.position, sprintSpeed);
             }
         }
 
@@ -508,9 +615,9 @@ namespace gameracers.Control
             RaycastHit[] hits = Physics.SphereCastAll(transform.position, shoutDistance, Vector3.up, 0);
             foreach (RaycastHit hit in hits)
             {
-                if (hit.collider.GetComponent<HumanController>() != null)
+                if (hit.collider.GetComponent<HumanBrain>() != null)
                 {
-                    HumanController ai = hit.collider.GetComponent<HumanController>();
+                    HumanBrain ai = hit.collider.GetComponent<HumanBrain>();
                     if (ai.enabled == false) continue;
                     if (ai.GetComponent<Health>().GetDead() == true) continue;
 
@@ -527,12 +634,11 @@ namespace gameracers.Control
 
         void StopHit()
         {
-            chaseTime = Time.time;
             GetComponent<ActionScheduler>().CancelCurrentAction();
         }
 
         public void Aggravate()
-        {
+        { 
             aggravate = true;
             GetComponent<ActionScheduler>().CancelCurrentAction();
         }
@@ -555,6 +661,31 @@ namespace gameracers.Control
             {
                 canAttack = humanClass.canAttack;
             }
+        }
+
+        public void TriggerFound()
+        {
+            if (hasBeenFound == true) return;
+
+            foundTimer = Time.time;
+        }
+
+        public void TriggerFoundKO(GameObject body)
+        {
+            unconsciousBody = body;
+        }
+
+        public bool GetFound()
+        {
+            return hasBeenFound;
+        }
+
+        public void Heal()
+        {
+            if (health.GetKO())
+                GetComponent<Animator>().SetTrigger("awake");
+            health.Heal();
+            wakeUpTime = Time.time;
         }
     }
 }

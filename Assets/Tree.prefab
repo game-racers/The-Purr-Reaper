@@ -12,7 +12,9 @@ GameObject:
   - component: {fileID: 2514497426004041084}
   - component: {fileID: 5079756190205674521}
   - component: {fileID: 6228548845228132003}
-  m_Layer: 0
+  - component: {fileID: 2065367170}
+  - component: {fileID: 2065367169}
+  m_Layer: 10
   m_Name: Tree
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -83,7 +85,7 @@ MeshRenderer:
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
   m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 0
+  m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -92,6 +94,33 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &2065367170
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7324774602604441553}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 11.3, y: 2, z: 17.29}
+  m_Center: {x: 0, y: 1, z: 0}
+--- !u!114 &2065367169
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7324774602604441553}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d96c08a561e1f447b44cc9662d0b7d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hidingID: Closet
+  maxPeople: 5
 --- !u!43 &-7796728484925389179
 Mesh:
   m_ObjectHideFlags: 0
@@ -378,7 +407,7 @@ MonoBehaviour:
     enableAmbientOcclusion: 1
     enableMaterialOptimize: 1
     aoDensity: 1
-    rootSpread: 8.72
+    rootSpread: 3.81
     groundOffset: 0
     rootMatrix:
       e00: 1
@@ -747,7 +776,7 @@ MonoBehaviour:
     vertEnd: 0
     capRange: 0
     breakOffset: 1
-    size: 8.72
+    size: 3.81
     scale: 1
     offset: 0
     baseAngle: 0

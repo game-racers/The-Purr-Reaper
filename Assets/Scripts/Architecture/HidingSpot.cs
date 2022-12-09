@@ -63,8 +63,6 @@ namespace gameracers.Architecture
             targetPoint.x = center.x - Random.Range(-size.x / 2, size.x / 2);
             targetPoint.y = center.y;
             targetPoint.z = center.z - Random.Range(-size.z / 2, size.z / 2);
-            Debug.Log("Center Point: " + center);
-            Debug.Log("TargetPoint: " + targetPoint);
 
             return targetPoint;
         }

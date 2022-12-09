@@ -51,7 +51,6 @@ namespace gameracers.Control
         void Update()
         {
             if (isPossessed != true) return;
-            if (health.GetVeryDead()) return;
 
 
             //if (Input.GetButtonDown("Fire1") && timeSinceLastAttack > attackMaxTimer)
