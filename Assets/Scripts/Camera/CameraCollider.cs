@@ -10,17 +10,17 @@ namespace gameracers.Camera
     public class CameraCollider : MonoBehaviour
     {
         Transform playerCenter;
-        Vector3 roamStart;
-        Vector3 roamStop;
-        Vector3 combatStart;
-        Vector3 combatStop;
-        Vector3 fpsPos;
+        Transform roamStart;
+        Transform roamStop;
+        Transform combatStart;
+        Transform combatStop;
+        Transform fpsPos;
         [SerializeField] float radius = .125f;
         [SerializeField] LayerMask mask;
         [SerializeField] float lerpMod = 3f;
 
-        Vector3 activeStart;
-        Vector3 activeStop;
+        Transform activeStart;
+        Transform activeStop;
         float activeDist;
 
         float lerpVal;
@@ -30,16 +30,16 @@ namespace gameracers.Camera
         void Start()
         {
             playerCenter = transform.parent;
-            roamStart = playerCenter.GetChild(1).position;
-            roamStop = playerCenter.GetChild(2).position;
-            combatStart = playerCenter.GetChild(3).position;
-            combatStop= playerCenter.GetChild(4).position;
-            fpsPos = playerCenter.GetChild(5).position;
+            roamStart = playerCenter.GetChild(1);
+            roamStop = playerCenter.GetChild(2);
+            combatStart = playerCenter.GetChild(3);
+            combatStop= playerCenter.GetChild(4);
+            fpsPos = playerCenter.GetChild(5);
 
             ChangeFocus(0);
         }
 
-        void Update()
+        void LateUpdate()
         {
             if (isForward) lerpVal += Time.time * lerpMod;
             if (!isForward) lerpVal -= Time.time * lerpMod;
@@ -47,7 +47,7 @@ namespace gameracers.Camera
 
             isForward = false;
 
-            RaycastHit[] hits = Physics.SphereCastAll(activeStop, radius, activeStart - activeStop, activeDist, mask, QueryTriggerInteraction.Ignore);
+            RaycastHit[] hits = Physics.SphereCastAll(activeStop.position, radius, activeStart.position - activeStop.position, activeDist, mask, QueryTriggerInteraction.Ignore);
 
             float distToBeat = activeDist;
             Vector3 hitPoint = Vector3.zero;
@@ -56,17 +56,25 @@ namespace gameracers.Camera
 
             foreach (RaycastHit hit in hits)
             {
-                Debug.Log("Hit!");
                 isForward = true;
                 hitPoint = hit.point;
             }
 
-            Debug.Log("Hitpoint: " + hitPoint);
             if (hitPoint != Vector3.zero)
             {
-                Debug.Log("Help");
-                transform.position = Vector3.Lerp(activeStart, hitPoint, lerpVal);
+                transform.position = GetClosestPointOnFiniteLine(hitPoint, activeStart.position, activeStop.position);
+                return;
             }
+            transform.position = activeStart.position;
+        }
+
+        private Vector3 GetClosestPointOnFiniteLine(Vector3 point, Vector3 start, Vector3 end)
+        {
+            Vector3 dir = end - start;
+            float length = dir.magnitude;
+            dir.Normalize();
+            float projectLength = Mathf.Clamp(Vector3.Dot(point - start, dir), 0f, length);
+            return start + dir * projectLength;
         }
 
         public void ChangeFocus(int newFocus)
@@ -86,7 +94,7 @@ namespace gameracers.Camera
                 activeStart = fpsPos;
                 activeStop = fpsPos;
             }
-            activeDist = Vector3.Distance(activeStart, activeStop);
+            activeDist = Vector3.Distance(activeStart.position, activeStop.position);
         }
     }
 }
