@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.U2D;
 using UnityEngine;
 
 namespace gameracers.Movement
@@ -8,16 +9,21 @@ namespace gameracers.Movement
     public class PlayerMover : MonoBehaviour
     {
         CharacterController charController;
-        [SerializeField] Transform cam;
+        [SerializeField] Transform camRef;
 
         // Movement
-        [SerializeField] float speed = 8f;
-        [SerializeField] float sprintMod = 2f;
+        float speed = 0f;
+        float targetSpd;
+        float speedCounter = 0f;
+        [SerializeField] float walkSpd = 4f;
+        [SerializeField] float sprintSpd = 10f;
+        [SerializeField] float speedUp = .4f;
+        [SerializeField] float slowDown = .3f;
         Vector3 direction;
+        float speedup = 0;
         [SerializeField] float turnSmoothTime = 0.1f;
 
         float turnSmoothVelocity;
-        float sprintSpd = 1f;
 
         // Gravity and jump
         float gravity = -9.81f;
@@ -28,9 +34,15 @@ namespace gameracers.Movement
         Vector3 velocity;
         bool isGrounded;
 
-        // Start is called before the first frame update
+        private void Awake()
+        {
+            targetSpd = walkSpd;
+        }
+
+
         void Start()
         {
+            Application.targetFrameRate = 60;
             charController = GetComponent<CharacterController>();
         }
 
@@ -39,12 +51,12 @@ namespace gameracers.Movement
             if (isAttack == false)
             {
                 UpdateMovement();
-                UpdateSpeed(direction.magnitude * speed * sprintSpd);
+                UpdateSpeed(speed);
                 UpdateJump();
             }
             else
             {
-                UpdateSpeed(0f);
+                UpdateSpeed(speed);
             }
         }
 
@@ -60,28 +72,52 @@ namespace gameracers.Movement
 
         private void UpdateMovement()
         {
-            float horiz = Input.GetAxis("Horizontal");
-            float vert = Input.GetAxis("Vertical");
+            direction = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical")).normalized;
 
-            direction = new Vector3(horiz, 0f, vert);
+            if (Input.GetAxisRaw("Horizontal") != 0f || Input.GetAxisRaw("Vertical") != 0f)
+            {
+                if (Input.GetKey(KeyCode.LeftShift))
+                    targetSpd = sprintSpd;
+                else
+                    targetSpd = walkSpd;
+            }
+            else
+            {
+                targetSpd = 0;
+                if (speedCounter > slowDown)
+                    speedCounter = slowDown;
+            }
 
             if (Input.GetKeyDown(KeyCode.LeftShift))
             {
-                sprintSpd = sprintMod;
+                if (targetSpd > speed)
+                    speedCounter = 0;
             }
-            if (Input.GetKeyUp(KeyCode.LeftShift))
+
+            if (speedCounter > speedUp)
+                speedCounter = speedUp;
+            if (speedCounter < 0)
+                speedCounter = 0;
+
+            if (speed > targetSpd)
             {
-                sprintSpd = 1f;
+                speedCounter -= Time.deltaTime;
+                speed = Mathf.Lerp(speed, targetSpd, (slowDown - speedCounter) / slowDown);
+            }
+            if (speed < targetSpd)
+            {
+                speedCounter += Time.deltaTime;
+                speed = Mathf.Lerp(speed, targetSpd, speedCounter / speedUp);
             }
 
             if (direction.magnitude >= 0.1f)
             {
-                float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
+                float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + camRef.eulerAngles.y;
                 float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
                 transform.rotation = Quaternion.Euler(0f, angle, 0f);
 
                 Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
-                charController.Move(moveDir.normalized * speed * sprintSpd * direction.magnitude * Time.deltaTime);
+                charController.Move(moveDir.normalized * speed * Time.deltaTime);
             }
         }
 

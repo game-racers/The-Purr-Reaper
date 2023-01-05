@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3572827201923722879}
   - component: {fileID: 1975879421895853280}
   - component: {fileID: 958540328825871193}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: Fist
   m_TagString: Untagged
   m_Icon: {fileID: 0}
