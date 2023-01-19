@@ -12,15 +12,10 @@ namespace gameracers.Camera
         [SerializeField] float maxForwardTilt = 315f;
         [Range(10, 90)] 
         [SerializeField] float maxBackwardTilt = 45f;
+        [SerializeField] public float mouseXRotMod = -1f;
         [SerializeField] public float mouseYRotMod = 1f;
-        [SerializeField] public float mouseXRotMod = 1f;
         float deltaX;
         float deltaY;
-
-        private void Start()
-        {
-
-        }
 
         void LateUpdate()
         {

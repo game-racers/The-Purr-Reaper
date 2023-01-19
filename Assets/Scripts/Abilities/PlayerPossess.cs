@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using gameracers.Stats;
+using gameracers.Camera;
 
 namespace gameracers.Abilities
 { 
@@ -62,9 +63,8 @@ namespace gameracers.Abilities
             if (possessed != null && Time.time - possessTimer > possessAnimTimerMax)
             {
                 // make camera follow possessed
-                var vcam = GameObject.Find("Third Person Camera").GetComponent<Cinemachine.CinemachineFreeLook>();
-                vcam.Follow = possessed.transform;
-                vcam.LookAt = possessed.transform;
+                CameraCollider vcam = GameObject.Find("Main Camera").GetComponent<CameraCollider>();
+                vcam.ChangeHost(possessed.transform.Find("Camera Points"));
 
                 return true;
             }
@@ -93,9 +93,8 @@ namespace gameracers.Abilities
 
             if (possessing == true && Time.time - possessTimer > possessAnimTimerMax)
             {
-                var vcam = GameObject.Find("Third Person Camera").GetComponent<Cinemachine.CinemachineFreeLook>();
-                vcam.Follow = transform;
-                vcam.LookAt = transform;
+                CameraCollider vcam = GameObject.Find("Main Camera").GetComponent<CameraCollider>();
+                vcam.ChangeHost(possessed.transform.Find("Camera Points"));
 
                 SetSkin(0, demonMat);
                 possessed = null;

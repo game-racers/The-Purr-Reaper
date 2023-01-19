@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.U2D;
 using UnityEngine;
 
 namespace gameracers.Movement
@@ -9,7 +8,7 @@ namespace gameracers.Movement
     public class PlayerMover : MonoBehaviour
     {
         CharacterController charController;
-        [SerializeField] Transform camRef;
+        Transform camRef;
 
         // Movement
         float speed = 0f;
@@ -19,8 +18,6 @@ namespace gameracers.Movement
         [SerializeField] float sprintSpd = 10f;
         [SerializeField] float speedUp = .4f;
         [SerializeField] float slowDown = .3f;
-        Vector3 direction;
-        float speedup = 0;
         [SerializeField] float turnSmoothTime = 0.1f;
 
         float turnSmoothVelocity;
@@ -37,8 +34,8 @@ namespace gameracers.Movement
         private void Awake()
         {
             targetSpd = walkSpd;
+            camRef = transform.Find("Player Center").Find("Move Ref");
         }
-
 
         void Start()
         {
@@ -72,7 +69,7 @@ namespace gameracers.Movement
 
         private void UpdateMovement()
         {
-            direction = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical")).normalized;
+            Vector3 direction = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical")).normalized;
 
             if (Input.GetAxisRaw("Horizontal") != 0f || Input.GetAxisRaw("Vertical") != 0f)
             {
@@ -134,6 +131,12 @@ namespace gameracers.Movement
             }
             velocity.y += gravity * Time.deltaTime;
             charController.Move(velocity * Time.deltaTime);
+        }
+
+        public void SetSpeed(float newSpd, float newSprintSpd)
+        {
+            walkSpd = newSpd;
+            sprintSpd = newSprintSpd;
         }
 
         public bool GetGrounded()

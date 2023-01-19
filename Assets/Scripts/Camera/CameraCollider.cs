@@ -9,7 +9,8 @@ namespace gameracers.Camera
 {
     public class CameraCollider : MonoBehaviour
     {
-        Transform playerCenter;
+        [SerializeField] Transform playerCenter;
+        Transform tempCenter;
         Transform roamStart;
         Transform roamStop;
         Transform combatStart;
@@ -29,12 +30,11 @@ namespace gameracers.Camera
 
         void Start()
         {
-            playerCenter = transform.parent;
-            roamStart = playerCenter.GetChild(1);
-            roamStop = playerCenter.GetChild(2);
-            combatStart = playerCenter.GetChild(3);
-            combatStop= playerCenter.GetChild(4);
-            fpsPos = playerCenter.GetChild(5);
+            roamStart = playerCenter.GetChild(0);
+            roamStop = playerCenter.GetChild(1);
+            combatStart = playerCenter.GetChild(2);
+            combatStop= playerCenter.GetChild(3);
+            fpsPos = playerCenter.GetChild(4);
 
             ChangeFocus(0);
         }
@@ -77,8 +77,32 @@ namespace gameracers.Camera
             return start + dir * projectLength;
         }
 
+        public void ChangeHost(Transform tempHost)
+        {
+            if (tempCenter != null)
+            {
+                tempCenter = null;
+                ChangeFocus(0);
+                return;
+            }
+            tempCenter = tempHost;
+            ChangeFocus(3);
+        }
+
         public void ChangeFocus(int newFocus)
         {
+            if (newFocus == 3)
+            {
+                if (tempCenter == null)
+                {
+                    ChangeFocus(0);
+                    Debug.Log("Ya fucked up");
+                    return;
+                }
+                activeStart = tempCenter.GetChild(0);
+                activeStop = tempCenter.GetChild(1);
+                
+            }
             if (newFocus == 0)
             {
                 activeStart = roamStart;

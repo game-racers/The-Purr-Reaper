@@ -21,7 +21,6 @@ namespace gameracers.Stats
         {
             if (isDead) return;
             if (isKO) return;
-            Debug.Log("I am asleep");
             isKO = true;
             GetComponent<Animator>().SetTrigger("die");
             GetComponent<ActionScheduler>().CancelCurrentAction();
