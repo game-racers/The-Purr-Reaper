@@ -4,6 +4,7 @@ using System.ComponentModel.Design;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.Animations;
 
 namespace gameracers.Camera
 {
@@ -27,9 +28,12 @@ namespace gameracers.Camera
         float lerpVal;
         int state = 0; // to become Enums
         bool isForward = false;
+        Vector3 originalEuler;
 
         void Start()
         {
+            originalEuler = playerCenter.parent.eulerAngles;
+            GetComponent<RotationConstraint>().rotationOffset = originalEuler;
             roamStart = playerCenter.GetChild(0);
             roamStop = playerCenter.GetChild(1);
             combatStart = playerCenter.GetChild(2);
@@ -101,7 +105,8 @@ namespace gameracers.Camera
                 }
                 activeStart = tempCenter.GetChild(0);
                 activeStop = tempCenter.GetChild(1);
-                
+                activeDist = Vector3.Distance(activeStart.position, activeStop.position);
+                return;
             }
             if (newFocus == 0)
             {
@@ -119,6 +124,7 @@ namespace gameracers.Camera
                 activeStop = fpsPos;
             }
             activeDist = Vector3.Distance(activeStart.position, activeStop.position);
+            GetComponent<RotationConstraint>().rotationOffset = originalEuler;
         }
     }
 }

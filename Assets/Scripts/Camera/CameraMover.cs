@@ -17,6 +17,11 @@ namespace gameracers.Camera
         float deltaX;
         float deltaY;
 
+        private void Start()
+        {
+            //transform.eulerAngles = playerCenter.parent.eulerAngles;
+        }
+
         void LateUpdate()
         {
             deltaX = Input.GetAxis("Mouse X") * mouseXRotMod;
