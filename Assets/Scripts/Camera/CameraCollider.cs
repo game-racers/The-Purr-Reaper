@@ -27,13 +27,11 @@ namespace gameracers.Camera
 
         float lerpVal;
         int state = 0; // to become Enums
-        bool isForward = false;
+        bool isObstructed = false;
         Vector3 originalEuler;
 
         void Start()
         {
-            originalEuler = playerCenter.parent.eulerAngles;
-            GetComponent<RotationConstraint>().rotationOffset = originalEuler;
             roamStart = playerCenter.GetChild(0);
             roamStop = playerCenter.GetChild(1);
             combatStart = playerCenter.GetChild(2);
@@ -45,24 +43,24 @@ namespace gameracers.Camera
 
         void LateUpdate()
         {
-            if (isForward) lerpVal += Time.time * lerpMod;
-            if (!isForward) lerpVal -= Time.time * lerpMod;
+            if (isObstructed) lerpVal += Time.time * lerpMod;
+            if (!isObstructed) lerpVal -= Time.time * lerpMod;
             lerpVal = Mathf.Clamp(lerpVal, 0, 1);
 
-            isForward = false;
+            isObstructed = false;
 
             RaycastHit[] hits = Physics.SphereCastAll(activeStop.position, radius, activeStart.position - activeStop.position, activeDist, mask, QueryTriggerInteraction.Ignore);
 
             float distToBeat = activeDist;
             Vector3 hitPoint = Vector3.zero;
-            //if (hits.Any())
-            //    hitPoint = hits[hits.Count() - 1].point;
+            if (hits.Any())
+                hitPoint = hits[0].point;
 
-            foreach (RaycastHit hit in hits)
-            {
-                isForward = true;
-                hitPoint = hit.point;
-            }
+            //foreach (RaycastHit hit in hits)
+            //{
+            //    isObstructed = true;
+            //    hitPoint = hit.point;
+            //}
 
             if (hitPoint != Vector3.zero)
             {
@@ -124,7 +122,6 @@ namespace gameracers.Camera
                 activeStop = fpsPos;
             }
             activeDist = Vector3.Distance(activeStart.position, activeStop.position);
-            GetComponent<RotationConstraint>().rotationOffset = originalEuler;
         }
     }
 }

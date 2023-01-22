@@ -1409,7 +1409,7 @@ MonoBehaviour:
   maxForwardTilt: 315
   maxBackwardTilt: 40
   mouseXRotMod: 1
-  mouseYRotMod: 1
+  mouseYRotMod: -1
 --- !u!1 &201696588
 GameObject:
   m_ObjectHideFlags: 0
@@ -1465,7 +1465,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 203645996}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: 0.81915206, z: -0, w: 0.57357645}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -1488,12 +1488,12 @@ RotationConstraint:
   m_Enabled: 1
   m_Weight: 1
   m_RotationAtRest: {x: 0, y: 0, z: 0}
-  m_RotationOffset: {x: 0, y: 180, z: 0}
+  m_RotationOffset: {x: 0, y: 0, z: 0}
   m_AffectRotationX: 1
   m_AffectRotationY: 1
   m_AffectRotationZ: 1
   m_IsContraintActive: 1
-  m_IsLocked: 0
+  m_IsLocked: 1
   m_Sources:
   - sourceTransform: {fileID: 187924451}
     weight: 1
@@ -7250,7 +7250,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1277310535735654146, guid: fb41f2005c1a6334da3c7049134d9e87, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0
+      value: -0.5735764
       objectReference: {fileID: 0}
     - target: {fileID: 1277310535735654146, guid: fb41f2005c1a6334da3c7049134d9e87, type: 3}
       propertyPath: m_LocalRotation.x
@@ -7258,11 +7258,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1277310535735654146, guid: fb41f2005c1a6334da3c7049134d9e87, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 1
+      value: 0.8191521
       objectReference: {fileID: 0}
     - target: {fileID: 1277310535735654146, guid: fb41f2005c1a6334da3c7049134d9e87, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1277310535735654146, guid: fb41f2005c1a6334da3c7049134d9e87, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -7270,7 +7270,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1277310535735654146, guid: fb41f2005c1a6334da3c7049134d9e87, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 180
+      value: 250
       objectReference: {fileID: 0}
     - target: {fileID: 1277310535735654146, guid: fb41f2005c1a6334da3c7049134d9e87, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -10151,7 +10151,7 @@ PositionConstraint:
   m_Enabled: 1
   m_Weight: 1
   m_TranslationAtRest: {x: -0.006259918, y: 0.36917663, z: 0.1813469}
-  m_TranslationOffset: {x: 0, y: 0, z: 0}
+  m_TranslationOffset: {x: 0.16200928, y: 0, z: 0.2492542}
   m_AffectTranslationX: 1
   m_AffectTranslationY: 1
   m_AffectTranslationZ: 1
@@ -12306,7 +12306,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1716866803}
-  m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -12326,7 +12326,7 @@ RotationConstraint:
   m_Enabled: 1
   m_Weight: 1
   m_RotationAtRest: {x: 0, y: 0, z: 0}
-  m_RotationOffset: {x: 0, y: 180, z: 0}
+  m_RotationOffset: {x: 0, y: 0, z: 0}
   m_AffectRotationX: 1
   m_AffectRotationY: 1
   m_AffectRotationZ: 1
@@ -15742,7 +15742,7 @@ GameObject:
   - component: {fileID: 77987869}
   - component: {fileID: 5140277844647181841}
   m_Layer: 9
-  m_Name: Test Hooman
+  m_Name: Better Hooman
   m_TagString: Human
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

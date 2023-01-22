@@ -24,7 +24,6 @@ namespace gameracers.Control
         [SerializeField] Weapon foot;
         float timeSinceLastAttack = Mathf.Infinity;
         [SerializeField] bool isAttack = false;
-        RotationConstraint rotCons;
 
         private void Awake()
         {
@@ -37,10 +36,6 @@ namespace gameracers.Control
 
             mover = GetComponent<PossessMover>();
             health = GetComponent<Health>();
-
-            // temp stuff
-            rotCons = transform.Find("Camera Points").GetComponent<RotationConstraint>();
-            rotCons.rotationOffset = new Vector3(0, 180, 0);
         }
 
         void Update()

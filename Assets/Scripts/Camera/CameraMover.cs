@@ -17,9 +17,9 @@ namespace gameracers.Camera
         float deltaX;
         float deltaY;
 
-        private void Start()
+        private void Awake()
         {
-            //transform.eulerAngles = playerCenter.parent.eulerAngles;
+            transform.eulerAngles = playerCenter.parent.eulerAngles;
         }
 
         void LateUpdate()
