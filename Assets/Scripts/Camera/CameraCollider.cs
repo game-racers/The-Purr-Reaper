@@ -12,11 +12,17 @@ namespace gameracers.Camera
     {
         [SerializeField] Transform playerCenter;
         Transform tempCenter;
+        // Cam positions for player
         Transform roamStart;
-        Transform roamStop;
+        Transform camStop;
         Transform combatStart;
-        Transform combatStop;
         Transform fpsPos;
+        // Cam look at positions for player
+        Transform roamLook;
+        Transform fpsLook;
+
+        // Focus options
+        Transform focusPoint;
         [SerializeField] float radius = .125f;
         [SerializeField] LayerMask mask;
         [SerializeField] float lerpMod = 3f;
@@ -28,17 +34,19 @@ namespace gameracers.Camera
         float lerpVal;
         int state = 0; // to become Enums
         bool isObstructed = false;
-        Vector3 originalEuler;
 
         void Start()
         {
-            roamStart = playerCenter.GetChild(0);
-            roamStop = playerCenter.GetChild(1);
-            combatStart = playerCenter.GetChild(2);
-            combatStop= playerCenter.GetChild(3);
-            fpsPos = playerCenter.GetChild(4);
+            Transform camPoints = playerCenter.GetChild(0);
+            roamStart = camPoints.GetChild(0);
+            combatStart = camPoints.GetChild(1);
+            camStop = camPoints.GetChild(2);
+            fpsPos = camPoints.GetChild(3);
+            camPoints = playerCenter.GetChild(1);
+            roamLook = camPoints.GetChild(0);
+            fpsLook = camPoints.GetChild(1);
 
-            ChangeFocus(0);
+            ChangePOV(0);
         }
 
         void LateUpdate()
@@ -62,6 +70,11 @@ namespace gameracers.Camera
             //    hitPoint = hit.point;
             //}
 
+            if (focusPoint != null)
+            {
+                transform.LookAt(focusPoint);
+            }
+
             if (hitPoint != Vector3.zero)
             {
                 transform.position = GetClosestPointOnFiniteLine(hitPoint, activeStart.position, activeStop.position);
@@ -84,44 +97,62 @@ namespace gameracers.Camera
             if (tempCenter != null)
             {
                 tempCenter = null;
-                ChangeFocus(0);
+                ChangePOV(0);
                 return;
             }
             tempCenter = tempHost;
-            ChangeFocus(3);
+            ChangePOV(3);
         }
 
-        public void ChangeFocus(int newFocus)
+        public void ChangePOV(int newFocus)
         {
+            state = newFocus;
+
             if (newFocus == 3)
             {
                 if (tempCenter == null)
                 {
-                    ChangeFocus(0);
+                    ChangePOV(0);
                     Debug.Log("Ya fucked up");
                     return;
                 }
                 activeStart = tempCenter.GetChild(0);
                 activeStop = tempCenter.GetChild(1);
+                transform.LookAt(tempCenter.GetChild(3));
                 activeDist = Vector3.Distance(activeStart.position, activeStop.position);
                 return;
             }
             if (newFocus == 0)
             {
                 activeStart = roamStart;
-                activeStop = roamStop;
+                activeStop = camStop;
+                transform.LookAt(roamLook);
             }
             if (newFocus == 1)
             {
                 activeStart = combatStart;
-                activeStop = combatStop;
+                activeStop = camStop;
+                transform.LookAt(fpsLook);
             }
             if (newFocus == 2)
             {
                 activeStart = fpsPos;
                 activeStop = fpsPos;
+                transform.LookAt(fpsLook);
             }
             activeDist = Vector3.Distance(activeStart.position, activeStop.position);
+        }
+
+        public void FocusOn(Transform newFocus)
+        {
+            if (newFocus == focusPoint)
+            {
+                newFocus = null;
+                ChangePOV(state);
+                return;
+            }
+            focusPoint = newFocus;
+            transform.LookAt(focusPoint);
         }
     }
 }
