@@ -14,7 +14,7 @@ namespace gameracers.Control
         // Player stuff
         Health health;
         PlayerFighter fighter;
-        PlayerMover mover;
+        PlayerMoverTemp mover;
         PlayerPossess possessAbility;
         PlayerForms formsAbility;
         [SerializeField] ParticleSystem particles;
@@ -32,6 +32,25 @@ namespace gameracers.Control
         //Respawn Point
         Vector3 spawnPoint;
 
+        // Jump
+        bool isGrounded = true;
+
+        private void OnEnable()
+        {
+            EventListener.onJump += Jump;
+        }
+
+        private void OnDisable()
+        {
+            EventListener.onJump -= Jump;
+        }
+
+        private void Jump(Vector3 jumpVector)
+        {
+            isGrounded = false;
+            mover.Jump(jumpVector);
+        }
+
         void Awake()
         {
             Cursor.lockState = CursorLockMode.Locked;
@@ -39,7 +58,7 @@ namespace gameracers.Control
 
             health = GetComponent<Health>();
             fighter = GetComponent<PlayerFighter>();
-            mover = GetComponent<PlayerMover>();
+            mover = GetComponent<PlayerMoverTemp>();
             possessAbility = GetComponent<PlayerPossess>();
             formsAbility = GetComponent<PlayerForms>();
 
@@ -48,9 +67,13 @@ namespace gameracers.Control
 
         void Update()
         {
-            mover.UpdateGravity();
-
             if (health.GetDead()) return;
+
+            if (isGrounded == false)
+            {
+                isGrounded = mover.UpdateJump();
+                return;
+            }
 
             UpdatePossession();
             if (possessed != null) return;
@@ -122,7 +145,7 @@ namespace gameracers.Control
         private void UpdateAttack()
         {
             // If in the air, cannot attack
-            if (mover.GetGrounded() == false) return;
+            //if (mover.GetGrounded() == false) return;
 
             if (Input.GetButtonDown("Fire1"))
             {

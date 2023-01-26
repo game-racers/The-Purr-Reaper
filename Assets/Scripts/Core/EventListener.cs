@@ -13,6 +13,9 @@ public class EventListener : MonoBehaviour
     public delegate void OnDemonButton(int buttonID);
     public static event OnDemonButton onDemonButton;
 
+    public delegate void OnJump(Vector3 jumpVector);
+    public static event OnJump onJump;
+
     public static void CrossBuilding(GameObject entity, GameObject building, bool isEnter)
     {
         if (onCrossThreshold != null)
@@ -29,5 +32,11 @@ public class EventListener : MonoBehaviour
     {
         if (onDemonButton != null)
             onDemonButton(buttonID);
-    }            
+    }
+
+    public static void JumpAction(Vector3 jumpVector)
+    {
+        if (onJump != null)
+            onJump(jumpVector);
+    }
 }
