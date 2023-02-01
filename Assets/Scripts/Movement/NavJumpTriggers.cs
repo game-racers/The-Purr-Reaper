@@ -7,22 +7,38 @@ namespace gameracers.Movement
     public class NavJumpTriggers : MonoBehaviour
     {
         [SerializeField] bool canJump = true;
-        [SerializeField] Transform otherEnd;
-        Vector3 direction;
+        [SerializeField] Transform startJump;
+        [SerializeField] Transform midPoint;
+        [SerializeField] Transform landPoint;
+        [SerializeField] Transform endJump;
+        List<Vector3> jumpPts = new List<Vector3>();
 
         private void Awake()
         {
-            direction = otherEnd.position - transform.position;
+            GetComponent<MeshRenderer>().enabled = false;
+            jumpPts.Add(Vector3.zero);
+            jumpPts.Add(midPoint.position - startJump.position);
+            jumpPts.Add(landPoint.position - midPoint.position);
+            jumpPts.Add(endJump.position - landPoint.position);
         }
 
         private void OnTriggerStay(Collider other)
         {
-            if (canJump != true || other.tag != "Player") return;
-            if (Input.GetButtonDown("Jump"))
-            {
-                EventListener.JumpAction(direction);
-            }
+            JumpScript(other);
         }
 
+        private void JumpScript(Collider other)
+        {
+            if (canJump != true || other.tag != "Player") return;
+            if (Input.GetButton("Jump"))
+            {
+                Vector3 jumpDir = startJump.position - transform.position;
+                Vector3 dir0 = startJump.position - other.transform.position;
+                float adjacent = dir0.magnitude * Mathf.Cos(Vector3.Angle(jumpDir, dir0) * Mathf.Deg2Rad);
+                Vector3 actual = jumpDir.normalized * adjacent;
+                jumpPts[0] = actual;
+                EventListener.JumpAction(jumpPts);
+            }
+        }
     }
 }

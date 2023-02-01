@@ -5,7 +5,7 @@ using gameracers.Stats;
 using gameracers.Combat;
 using gameracers.Movement;
 using gameracers.Abilities;
-
+using UnityEngine.AI;
 
 namespace gameracers.Control
 { 
@@ -14,16 +14,13 @@ namespace gameracers.Control
         // Player stuff
         Health health;
         PlayerFighter fighter;
-        PlayerMoverTemp mover;
+        PlayerMover mover;
         PlayerPossess possessAbility;
         PlayerForms formsAbility;
         [SerializeField] ParticleSystem particles;
 
         // Possession
-        GameObject possessed = null;
         bool canPossess = true;
-
-        // new Possession
         GameObject possessedEntity = null;
 
         // Violence
@@ -45,10 +42,10 @@ namespace gameracers.Control
             EventListener.onJump -= Jump;
         }
 
-        private void Jump(Vector3 jumpVector)
+        private void Jump(List<Vector3> jumpPts)
         {
             isGrounded = false;
-            mover.Jump(jumpVector);
+            mover.Jump(jumpPts);
         }
 
         void Awake()
@@ -58,7 +55,7 @@ namespace gameracers.Control
 
             health = GetComponent<Health>();
             fighter = GetComponent<PlayerFighter>();
-            mover = GetComponent<PlayerMoverTemp>();
+            mover = GetComponent<PlayerMover>();
             possessAbility = GetComponent<PlayerPossess>();
             formsAbility = GetComponent<PlayerForms>();
 
@@ -69,6 +66,12 @@ namespace gameracers.Control
         {
             if (health.GetDead()) return;
 
+            if (Input.GetButtonDown("Cancel"))
+            {
+                EventListener.PauseGame(true);
+                return;
+            }
+
             if (isGrounded == false)
             {
                 isGrounded = mover.UpdateJump();
@@ -76,7 +79,7 @@ namespace gameracers.Control
             }
 
             UpdatePossession();
-            if (possessed != null) return;
+            if (possessedEntity != null) return;
 
             if (Input.GetKeyDown(KeyCode.E))
             {
@@ -118,9 +121,10 @@ namespace gameracers.Control
             if (enabled == true)
             {
                 possessedEntity = possessAbility.GetPossessed();
-                GetComponent<CharacterController>().enabled = false;
+                GetComponent<NavMeshAgent>().enabled = false;
+                GetComponent<CapsuleCollider>().enabled = false;
                 transform.position = new Vector3(0f, -10f, 0f);
-                GetComponent<CharacterController>().enabled = true;
+                GetComponent<CapsuleCollider>().enabled = true;
             }
             possessedEntity.GetComponent<HumanBrain>().enabled = !enabled;
             possessedEntity.GetComponent<PossessedController>().enabled = enabled;
@@ -129,9 +133,12 @@ namespace gameracers.Control
 
             if (enabled == false)
             {
-                GetComponent<CharacterController>().enabled = false;
-                transform.position = possessedEntity.GetComponent<PossessedController>().GetSpawnPoint();
-                GetComponent<CharacterController>().enabled = true;
+                GetComponent<CapsuleCollider>().enabled = false;
+                NavMeshHit hit;
+                NavMesh.SamplePosition(possessedEntity.GetComponent<PossessedController>().GetSpawnPoint(), out hit, 1f, NavMesh.AllAreas);
+                transform.position = hit.position;
+                GetComponent<NavMeshAgent>().enabled = true;
+                GetComponent<CapsuleCollider>().enabled = true;
                 possessedEntity = null;
             }
         }

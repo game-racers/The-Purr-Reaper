@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace gameracers.Camera
 {
@@ -14,8 +13,24 @@ namespace gameracers.Camera
         [SerializeField] float maxBackwardTilt = 45f;
         [SerializeField] public float mouseXRotMod = -1f;
         [SerializeField] public float mouseYRotMod = 1f;
+        bool isPaused = false;
         float deltaX;
         float deltaY;
+
+        private void OnEnable()
+        {
+            EventListener.onPause += PauseGame;
+        }
+
+        private void OnDisable()
+        {
+            EventListener.onPause -= PauseGame;
+        }
+
+        private void PauseGame(bool setPause)
+        {
+            //isPaused = setPause;
+        }
 
         private void Awake()
         {
@@ -24,6 +39,7 @@ namespace gameracers.Camera
 
         void LateUpdate()
         {
+            if (isPaused) return;
             deltaX = Input.GetAxis("Mouse X") * mouseXRotMod;
             deltaY = Input.GetAxis("Mouse Y") * mouseYRotMod;
             transform.RotateAround(transform.position, Vector3.up, deltaX);

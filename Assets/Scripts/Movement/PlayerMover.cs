@@ -1,13 +1,13 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace gameracers.Movement
 {
     public class PlayerMover : MonoBehaviour
     {
-        CharacterController charController;
+        NavMeshAgent agent;
         Transform moveRef;
 
         // Movement
@@ -19,70 +19,45 @@ namespace gameracers.Movement
         [SerializeField] float speedUp = .4f;
         [SerializeField] float slowDown = .3f;
         [SerializeField] float turnSmoothTime = 0.1f;
+        Vector3 lastDir;
 
         float turnSmoothVelocity;
 
         // Gravity
-        [SerializeField] float gravity = -9.81f;
-        [SerializeField] Transform groundCheck;
-        float groundDistance = 0.4f;
         [SerializeField] LayerMask groundMask;
-        Vector3 velocity;
 
         // Jump
+        [SerializeField] float airSpd = 1f;
+        [SerializeField] float jumpDelay = .5f;
+        float jumpSpd;
+        float jumpTime;
         [SerializeField] float searchRad = 1f;
         [SerializeField] GameObject jumpHighLight;
-        Transform cam;
-        Transform lookAtPoint;
-        [SerializeField] float jumpDist = 1.8f;
-        bool isGrounded;
+        bool isJump = false;
+        Vector3[] jumpPts;
+        int jumpI = 0;
+        Vector3 startJump;
+        
 
-        private void Awake()
+        void Awake()
         {
             targetSpd = walkSpd;
+            jumpSpd = jumpDelay;
             moveRef = transform.Find("Player Center").Find("Move Ref");
-            cam = GameObject.Find("Main Camera").transform;
-            lookAtPoint = transform.Find("Player Center").GetChild(1).GetChild(0);
-            Application.targetFrameRate = 60;
-            charController = GetComponent<CharacterController>();
-        }
-
-        public void UpdateMover(bool isAttack)
-        {
-            if (isAttack == false)
-            {
-                UpdateMovement();
-                UpdateSpeed(speed);
-                UpdateJump();
-            }
-            else
-            {
-                UpdateSpeed(speed);
-            }
-        }
-
-        public void UpdateGravity()
-        {
-            isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
-            GetComponent<Animator>().SetBool("isGrounded", isGrounded);
-            velocity.y += gravity * Time.deltaTime;
-            if (isGrounded == true && velocity.y < -4f)
-            {
-                velocity.y = -4f;
-            }
-            charController.Move(velocity * Time.deltaTime);
+            agent = GetComponent<NavMeshAgent>();
         }
 
         private void UpdateMovement()
         {
+            if (isJump) return;
             Vector3 direction = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical")).normalized;
-
             if (Input.GetAxisRaw("Horizontal") != 0f || Input.GetAxisRaw("Vertical") != 0f)
             {
                 if (Input.GetKey(KeyCode.LeftShift))
                     targetSpd = sprintSpd;
                 else
                     targetSpd = walkSpd;
+                lastDir = direction;
             }
             else
             {
@@ -113,14 +88,14 @@ namespace gameracers.Movement
                 speed = Mathf.Lerp(speed, targetSpd, speedCounter / speedUp);
             }
 
-            if (direction.magnitude >= 0.1f)
+            if (speed > .1f)
             {
                 float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + moveRef.eulerAngles.y;
                 float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
                 transform.rotation = Quaternion.Euler(0f, angle, 0f);
 
                 Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
-                charController.Move(moveDir.normalized * speed * Time.deltaTime);
+                agent.Move(moveDir.normalized * speed * Time.deltaTime);
             }
         }
 
@@ -129,55 +104,117 @@ namespace gameracers.Movement
             GetComponent<Animator>().SetFloat("forwardSpeed", forwardSpeed);
         }
 
-        private void UpdateJump()
+        public bool UpdateJump()
         {
-            if (CheckJump() && Input.GetButtonDown("Jump"))
+            jumpTime += jumpSpd * Time.deltaTime;
+            if (jumpI == 1)
             {
-                transform.position = jumpHighLight.transform.position;
-                jumpHighLight.SetActive(false);
+                transform.position = Vector3.Lerp(Vector3.Lerp(startJump, startJump + jumpPts[1], jumpTime), Vector3.Lerp(startJump + jumpPts[1], startJump + jumpPts[1] + jumpPts[2], jumpTime), jumpTime);
             }
-        }
-
-        private bool CheckJump()
-        {
-            if (isGrounded == false) return false;
-
-            float distToBeat = 100f;
-            int hitPoint = -1;
-            RaycastHit[] hits = Physics.SphereCastAll(lookAtPoint.position, searchRad, lookAtPoint.position - cam.position, jumpDist, groundMask, QueryTriggerInteraction.Ignore);
-            if (hits.Length != 0)
+            else
             {
-                distToBeat = Vector3.Distance(lookAtPoint.position, hits[0].point);
-                hitPoint = 0;
-            }
-            for (int i = 1; i < hits.Length; i++)
+                NavMeshHit hit;
+                NavMesh.SamplePosition(startJump + jumpPts[jumpI], out hit, .5f, NavMesh.AllAreas);
+                transform.position = Vector3.Lerp(startJump, hit.position, jumpTime);
+            }    
+            if (jumpTime > 1f)
             {
-                float dist = Vector3.Distance(lookAtPoint.position, hits[i].point);
-                if (dist < distToBeat)
+                startJump = transform.position;
+                jumpSpd = airSpd;
+                jumpTime = 0;
+                jumpI++;
+                if (jumpI == 2)
                 {
-                    distToBeat = dist;
-                    hitPoint = i;
+                    jumpSpd = jumpDelay;
+                    jumpI = 3;
                 }
-            }
-
-            if (hitPoint >= 0)
-            {
-                jumpHighLight.SetActive(true);
-                jumpHighLight.transform.position = hits[hitPoint].point;
-                return true;
+                if (jumpI == 4)
+                {
+                    jumpI = 0;
+                    jumpSpd = jumpDelay;
+                    agent.enabled = true;
+                    isJump = false;
+                    return true;
+                }
             }
             return false;
         }
 
-        public void SetSpeed(float newSpd, float newSprintSpd)
+        public void Jump(List<Vector3> jumpPts)
         {
-            walkSpd = newSpd;
-            sprintSpd = newSprintSpd;
+            Vector3 lookDir = jumpPts[jumpPts.Count - 1].normalized;
+            transform.LookAt(lookDir + transform.position);
+            agent.enabled = false;
+            isJump = true;
+            this.jumpPts = jumpPts.ToArray();
+            startJump = transform.position;
         }
 
-        public bool GetGrounded()
+        /*
+        private bool CheckJump()
         {
-            return isGrounded;
+            Vector3 jumpTarget;
+            Vector3 temp;
+            float distToBeat = 100f;
+            float dist;
+            RaycastHit[] hits = Physics.SphereCastAll(lookAtPoint.position, searchRad, lookAtPoint.position - cam.position, jumpDist, groundMask, QueryTriggerInteraction.UseGlobal);
+            if (hits.Length == 0) return false;
+            
+            for (int i = 0; i < hits.Length; i++)
+            {
+                if (hits[i].transform.gameObject.layer == 12) // 12 is Jump Target
+                {
+                    temp = hits[i].point;
+                    float dist = Vector3.Distance(lookAtPoint.position, hits[i].point);
+                    if (dist < distToBeat)
+                    {
+                        distToBeat = dist;
+                        jumpTarget = hits[i].point;
+                    }
+                }
+                float dist = Vector3.Distance(lookAtPoint.position, temp.position);
+                Debug.Log(temp.mask);
+                if (temp.mask != 3) continue;
+                if (dist < distToBeat)
+                {
+                    distToBeat = dist;
+                    jumpTarget = temp;
+                }
+            }
+
+            NavMesh.SamplePosition(jumpTarget.position, out temp, .1f, 3);
+            if (temp.mask != 3) return false;
+            if (distToBeat <= 10f)
+            {
+                jumpHighLight.SetActive(true);
+                jumpHighLight.transform.position = temp.position;
+                return true;
+            }
+            return false;
+        }
+        */
+
+        public void SetJump()
+        {
+            isJump = false;
+            agent.ResetPath();
+        }
+
+        public void UpdateMover(bool isAttack)
+        {
+            if (isJump == true)
+            {
+                return;
+            }
+            if (isAttack == false)
+            {
+                UpdateMovement();
+                UpdateSpeed(speed);
+            }
+            else
+            {
+                UpdateSpeed(speed);
+            }
         }
     }
 }

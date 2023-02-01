@@ -12,7 +12,6 @@ namespace gameracers.UI
     {
         [SerializeField] float fadeInTime = 1f;
         float fadeTimer;
-        [SerializeField] float fadeMod = 1f;
         [SerializeField] float maxAlpha = .5f;
         [SerializeField] Image background;
         [SerializeField] GameObject[] deathUI;
@@ -29,7 +28,7 @@ namespace gameracers.UI
 
             if (Time.time - fadeTimer < fadeInTime)
             {
-                tempColor.a = fadeTimer / fadeInTime * maxAlpha;
+                tempColor.a = (Time.time - fadeTimer) / fadeInTime * maxAlpha;
             }
             else
             {
