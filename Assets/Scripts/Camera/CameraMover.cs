@@ -9,28 +9,13 @@ namespace gameracers.Camera
         [SerializeField] Transform playerCenter;
         [Range(270, 350)]
         [SerializeField] float maxForwardTilt = 315f;
-        [Range(10, 90)] 
+        [Range(10, 90)]
         [SerializeField] float maxBackwardTilt = 45f;
         [SerializeField] public float mouseXRotMod = -1f;
         [SerializeField] public float mouseYRotMod = 1f;
         bool isPaused = false;
         float deltaX;
         float deltaY;
-
-        private void OnEnable()
-        {
-            EventListener.onPause += PauseGame;
-        }
-
-        private void OnDisable()
-        {
-            EventListener.onPause -= PauseGame;
-        }
-
-        private void PauseGame(bool setPause)
-        {
-            //isPaused = setPause;
-        }
 
         private void Awake()
         {
@@ -57,6 +42,28 @@ namespace gameracers.Camera
             }
 
             transform.RotateAround(transform.position, transform.right, deltaY);
+        }
+
+        public void ChangeSensitivity(float val)
+        {
+            float temp = 1;
+            if (mouseXRotMod < 0f)
+                temp = -1;
+            mouseXRotMod = val * temp;
+            if (mouseYRotMod < 0f)
+                temp = -1;
+            mouseYRotMod = val * temp;
+            
+        }
+
+        public void FlipSensitivity(bool isX)
+        {
+            if (isX == true)
+            {
+                mouseXRotMod *= -1;
+            }
+            if (isX == false)
+                mouseYRotMod *= -1;
         }
     }
 }
