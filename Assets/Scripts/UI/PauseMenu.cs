@@ -16,7 +16,7 @@ namespace gameracers.UI
 
         public void Resume()
         {
-            GameManager.gm.UpdateGameState(GameState.Play);
+            EventListener.PauseGame(false);
             Deactivate();
         }
 

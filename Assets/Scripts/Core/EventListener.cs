@@ -25,6 +25,9 @@ public class EventListener : MonoBehaviour
     public delegate void OnSliderChange(string origin, float val);
     public static event OnSliderChange onSliderChange;
 
+    public delegate void OnColourPicker(Vector4 colour);
+    public static event OnColourPicker onColourPicker;
+
     public static void CrossBuilding(GameObject entity, GameObject building, bool isEnter)
     {
         if (onCrossThreshold != null)
@@ -64,10 +67,12 @@ public class EventListener : MonoBehaviour
     public static void SliderChange(string origin, float val)
     {
         if (onSliderChange != null)
-        {
-            Debug.Log("Help!");
             onSliderChange(origin, val);
-        }
-            //onValueChange(origin, val);
+    }
+
+    public static void ColourChange(Vector4 colour)
+    {
+        if (onColourPicker != null)
+            onColourPicker(colour);
     }
 }

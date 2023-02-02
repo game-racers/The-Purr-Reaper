@@ -161,7 +161,7 @@ namespace gameracers.Core
             Cursor.visible = false;
             menus[3].SetActive(false);
             menus[4].SetActive(false);
-            camRot.SetActive(true);
+            //camRot.SetActive(true);
         }
 
         private void PauseGame()
@@ -170,7 +170,7 @@ namespace gameracers.Core
             menus[4].SetActive(false);
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.Confined;
-            camRot.SetActive(false);
+            //camRot.SetActive(false);
             Time.timeScale = 0f;
         }
 

@@ -21,11 +21,18 @@ namespace gameracers.Camera
         private void OnEnable()
         {
             EventListener.onSliderChange += ChangeSensitivity;
+            EventListener.onPause += PauseGame;
         }
 
         private void OnDisable()
         {
             EventListener.onSliderChange -= ChangeSensitivity;
+            EventListener.onPause -= PauseGame;
+        }
+
+        private void PauseGame(bool paused)
+        {
+            isPaused = paused;
         }
 
         private void Awake()
@@ -57,10 +64,8 @@ namespace gameracers.Camera
 
         private void ChangeSensitivity(string origin, float val)
         {
-            Debug.Log("Hello " + origin);
             if (origin == slideOrigin)
             {
-                Debug.Log("World");
                 float temp = 1;
                 if (mouseXRotMod < 0f)
                     temp = -1;

@@ -26,15 +26,5 @@ namespace gameracers.UI
                     text.text = v.ToString("0.00");
             });
         }
-
-        private void Update()
-        {
-            slider.onValueChanged.AddListener((v) =>
-            {
-                EventListener.SliderChange(originName, v);
-                if (text != null)
-                    text.text = v.ToString("0.00");
-            });
-        }
     }
 }
