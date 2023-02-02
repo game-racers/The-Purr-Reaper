@@ -15,7 +15,7 @@ namespace gameracers.Core
         public GameState state;
         bool hasSpawned = false;
         [SerializeField] GameObject startCutscene;
-        [SerializeField][Header("Order: [Victory, Game Over, Death, Pause]")]
+        [SerializeField][Header("Order: [Victory, Game Over, Death, Pause, Options]")]
         GameObject[] menus;
         GameObject camRot;
         List<BuildingOccupant> occupants = new List<BuildingOccupant>();
@@ -160,12 +160,14 @@ namespace gameracers.Core
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
             menus[3].SetActive(false);
+            menus[4].SetActive(false);
             camRot.SetActive(true);
         }
 
         private void PauseGame()
         {
             menus[3].SetActive(true);
+            menus[4].SetActive(false);
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.Confined;
             camRot.SetActive(false);

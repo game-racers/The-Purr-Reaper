@@ -13,9 +13,20 @@ namespace gameracers.Camera
         [SerializeField] float maxBackwardTilt = 45f;
         [SerializeField] public float mouseXRotMod = -1f;
         [SerializeField] public float mouseYRotMod = 1f;
+        [SerializeField] string slideOrigin;
         bool isPaused = false;
         float deltaX;
         float deltaY;
+
+        private void OnEnable()
+        {
+            EventListener.onSliderChange += ChangeSensitivity;
+        }
+
+        private void OnDisable()
+        {
+            EventListener.onSliderChange -= ChangeSensitivity;
+        }
 
         private void Awake()
         {
@@ -44,24 +55,26 @@ namespace gameracers.Camera
             transform.RotateAround(transform.position, transform.right, deltaY);
         }
 
-        public void ChangeSensitivity(float val)
+        private void ChangeSensitivity(string origin, float val)
         {
-            float temp = 1;
-            if (mouseXRotMod < 0f)
-                temp = -1;
-            mouseXRotMod = val * temp;
-            if (mouseYRotMod < 0f)
-                temp = -1;
-            mouseYRotMod = val * temp;
-            
+            Debug.Log("Hello " + origin);
+            if (origin == slideOrigin)
+            {
+                Debug.Log("World");
+                float temp = 1;
+                if (mouseXRotMod < 0f)
+                    temp = -1;
+                mouseXRotMod = val * temp;
+                if (mouseYRotMod < 0f)
+                    temp = -1;
+                mouseYRotMod = val * temp;
+            }
         }
 
         public void FlipSensitivity(bool isX)
         {
             if (isX == true)
-            {
                 mouseXRotMod *= -1;
-            }
             if (isX == false)
                 mouseYRotMod *= -1;
         }

@@ -22,6 +22,9 @@ public class EventListener : MonoBehaviour
     public delegate void OnPause(bool setPause);
     public static event OnPause onPause;
 
+    public delegate void OnSliderChange(string origin, float val);
+    public static event OnSliderChange onSliderChange;
+
     public static void CrossBuilding(GameObject entity, GameObject building, bool isEnter)
     {
         if (onCrossThreshold != null)
@@ -56,5 +59,15 @@ public class EventListener : MonoBehaviour
     {
         if (onPause != null)
             onPause(setPause);
+    }
+
+    public static void SliderChange(string origin, float val)
+    {
+        if (onSliderChange != null)
+        {
+            Debug.Log("Help!");
+            onSliderChange(origin, val);
+        }
+            //onValueChange(origin, val);
     }
 }
