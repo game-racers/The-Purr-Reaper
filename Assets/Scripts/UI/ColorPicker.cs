@@ -30,6 +30,8 @@ namespace gameracers.UI
 
         private void Start()
         {
+            colour = Color.black;
+            EventListener.ColourChange(colour);
             trans = GetComponent<RectTransform>();
             imageOffset = new Vector2(
                 (trans.position.x) - (trans.rect.width / 2f * trans.localScale.x),
