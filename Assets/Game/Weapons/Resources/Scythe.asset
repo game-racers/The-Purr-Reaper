@@ -13,7 +13,5 @@ MonoBehaviour:
   m_Name: Scythe
   m_EditorClassIdentifier: 
   damage: 1
-  weaponName: Scythe
+  weaponRange: 3
   equipPrefab: {fileID: 0}
-  unequipPrefab: {fileID: 0}
-  overrideController: {fileID: 0}

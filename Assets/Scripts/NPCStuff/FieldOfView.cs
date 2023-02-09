@@ -84,21 +84,21 @@ namespace gameracers.NPCStuff
 
                             if (npc.gameObject.GetComponent<Health>().GetKO())
                             {
-                                HumanBrain ai = npc.gameObject.GetComponent<HumanBrain>();
+                                HumanController ai = npc.gameObject.GetComponent<HumanController>();
                                 if (ai.enabled == true)
                                 {
                                     unconsciousBody = npc.gameObject;
                                     seesKO = true;
-                                    //ai.TriggerFoundKO(npc.gameObject);
                                     return;
                                 }
                             }
 
                             if (npc.gameObject.GetComponent<Health>().GetDead())
                             {
-                                HumanBrain ai = npc.gameObject.GetComponent<HumanBrain>();
+                                HumanController ai = npc.gameObject.GetComponent<HumanController>();
                                 if (ai.enabled == true)
                                 {
+                                    unconsciousBody = npc.gameObject;
                                     seesDead = true;
                                     ai.TriggerFound();
                                     isAccounted = ai.GetFound();
@@ -112,6 +112,7 @@ namespace gameracers.NPCStuff
             seesKO = false;
             seesDead = false;
             isAccounted = false;
+            unconsciousBody = null;
         }
 
         public Transform getLastLocation()

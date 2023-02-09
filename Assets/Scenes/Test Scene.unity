@@ -20686,7 +20686,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   alertLight: {fileID: 1534943916}
-  buttonID: 123
 --- !u!1 &870217734
 GameObject:
   m_ObjectHideFlags: 0
@@ -21487,7 +21486,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &897412103
 Transform:
   m_ObjectHideFlags: 0
@@ -21967,6 +21966,17 @@ Transform:
   m_Father: {fileID: 1843938353}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &915060731 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8487306027392112902, guid: f0a0cc9ae877ba841ac19943f68d7b75, type: 3}
+  m_PrefabInstance: {fileID: 233803650}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62d11b498b8172e419b37c5f35eb51d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &924030389
 GameObject:
   m_ObjectHideFlags: 0
@@ -25735,6 +25745,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 187924451}
     - target: {fileID: 516094260, guid: fb41f2005c1a6334da3c7049134d9e87, type: 3}
+      propertyPath: sprintSpd
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 516094260, guid: fb41f2005c1a6334da3c7049134d9e87, type: 3}
       propertyPath: jumpHighLight
       value: 
       objectReference: {fileID: 134740686}
@@ -25798,6 +25812,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6443367008819607019, guid: fb41f2005c1a6334da3c7049134d9e87, type: 3}
+      propertyPath: weapon
+      value: 
+      objectReference: {fileID: 11400000, guid: c9f46dc1af750674790c66a13b897bec, type: 2}
     - target: {fileID: 7680942963490953842, guid: fb41f2005c1a6334da3c7049134d9e87, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -26360,7 +26378,7 @@ GameObject:
   - component: {fileID: 1159602080}
   - component: {fileID: 1159602079}
   - component: {fileID: 1159602078}
-  - component: {fileID: 1159602077}
+  - component: {fileID: 1159602076}
   - component: {fileID: 1159602075}
   - component: {fileID: 1159602074}
   - component: {fileID: 1159602073}
@@ -26420,7 +26438,7 @@ MonoBehaviour:
   evacPoint: {fileID: 0}
   moveSpeed: 3
   newAngle: 120
-  newFOVRadius: 7
+  newFOVRadius: 25
   newCanWander: 0
 --- !u!114 &1159602074
 MonoBehaviour:
@@ -26450,7 +26468,7 @@ MonoBehaviour:
   weaponData: {fileID: 11400000, guid: ebf2cb75b8d9a9d4dab68bd815af79db, type: 2}
   rightHandTransform: {fileID: 591343131}
   weaponHolster: {fileID: 1500864006}
---- !u!114 &1159602077
+--- !u!114 &1159602076
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -26459,20 +26477,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 1159602070}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed959b9dac57ae84a95222d627c412fa, type: 3}
+  m_Script: {fileID: 11500000, guid: cebf6cc06c323ff4e975cb8d0ecef6fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  state: 0
   humanClass: {fileID: 11400000, guid: 811f7ba616d6f7043a66a9610a66d5ef, type: 2}
   canWander: 0
   width: 10
   length: 10
-  canIdle: 0
+  dwellTime: 10
   patrolPath: {fileID: 0}
   pathRadius: 1.4
-  dwellTime: 3
   shoutDistance: 10
-  evacPoint: {fileID: 5153133265702016717}
-  demonCatSightTimerMax: 10
+  SusTimer: 30
   wakeUpDelay: 5
 --- !u!114 &1159602078
 MonoBehaviour:
@@ -26486,7 +26503,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffbe634dcbffb574fb9c82c02e8d0dc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 7
+  radius: 20
   angle: 100
   playerRef: {fileID: 0}
   playerMask:
@@ -28826,7 +28843,7 @@ GameObject:
   - component: {fileID: 1245856336}
   - component: {fileID: 1245856335}
   - component: {fileID: 1245856334}
-  - component: {fileID: 1245856333}
+  - component: {fileID: 1245856332}
   - component: {fileID: 1245856331}
   - component: {fileID: 1245856330}
   - component: {fileID: 1245856329}
@@ -28916,7 +28933,7 @@ MonoBehaviour:
   weaponData: {fileID: 11400000, guid: ebf2cb75b8d9a9d4dab68bd815af79db, type: 2}
   rightHandTransform: {fileID: 1675664385}
   weaponHolster: {fileID: 1235240444}
---- !u!114 &1245856333
+--- !u!114 &1245856332
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -28925,21 +28942,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 1245856326}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed959b9dac57ae84a95222d627c412fa, type: 3}
+  m_Script: {fileID: 11500000, guid: cebf6cc06c323ff4e975cb8d0ecef6fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  state: 0
   humanClass: {fileID: 11400000, guid: 20d0a148dc2e9444bbbd20544a9e943e, type: 2}
   canWander: 0
   width: 10
   length: 10
-  canIdle: 0
+  dwellTime: 10
   patrolPath: {fileID: 699590761}
   pathRadius: 1.4
-  dwellTime: 3
   shoutDistance: 10
-  evacPoint: {fileID: 0}
-  demonCatSightTimerMax: 15
-  wakeUpDelay: 4
+  SusTimer: 30
+  wakeUpDelay: 5
 --- !u!114 &1245856334
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28952,7 +28968,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffbe634dcbffb574fb9c82c02e8d0dc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 7
+  radius: 20
   angle: 100
   playerRef: {fileID: 0}
   playerMask:
@@ -29070,7 +29086,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1245856326}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.09, y: 0, z: -52.97}
+  m_LocalPosition: {x: 12.1, y: 0, z: -57.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1706308605}
@@ -33353,7 +33369,7 @@ GameObject:
   - component: {fileID: 1487673781}
   - component: {fileID: 1487673780}
   - component: {fileID: 1487673779}
-  - component: {fileID: 1487673778}
+  - component: {fileID: 1487673777}
   - component: {fileID: 1487673776}
   - component: {fileID: 1487673775}
   - component: {fileID: 1487673774}
@@ -33413,7 +33429,7 @@ MonoBehaviour:
   evacPoint: {fileID: 0}
   moveSpeed: 3
   newAngle: 120
-  newFOVRadius: 7
+  newFOVRadius: 25
   newCanWander: 0
 --- !u!114 &1487673775
 MonoBehaviour:
@@ -33443,7 +33459,7 @@ MonoBehaviour:
   weaponData: {fileID: 11400000, guid: ebf2cb75b8d9a9d4dab68bd815af79db, type: 2}
   rightHandTransform: {fileID: 54521551}
   weaponHolster: {fileID: 1377786313}
---- !u!114 &1487673778
+--- !u!114 &1487673777
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -33452,21 +33468,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 1487673771}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed959b9dac57ae84a95222d627c412fa, type: 3}
+  m_Script: {fileID: 11500000, guid: cebf6cc06c323ff4e975cb8d0ecef6fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  state: 0
   humanClass: {fileID: 11400000, guid: 811f7ba616d6f7043a66a9610a66d5ef, type: 2}
   canWander: 1
   width: 10
   length: 10
-  canIdle: 0
+  dwellTime: 3
   patrolPath: {fileID: 0}
   pathRadius: 1.4
-  dwellTime: 3
   shoutDistance: 10
-  evacPoint: {fileID: 5153133265702016717}
-  demonCatSightTimerMax: 10
-  wakeUpDelay: 4
+  SusTimer: 30
+  wakeUpDelay: 5
 --- !u!114 &1487673779
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -33479,7 +33494,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffbe634dcbffb574fb9c82c02e8d0dc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 7
+  radius: 20
   angle: 100
   playerRef: {fileID: 0}
   playerMask:
@@ -34270,7 +34285,7 @@ GameObject:
   - component: {fileID: 1526588334}
   - component: {fileID: 1526588333}
   - component: {fileID: 1526588332}
-  - component: {fileID: 1526588331}
+  - component: {fileID: 1526588330}
   - component: {fileID: 1526588329}
   - component: {fileID: 1526588328}
   - component: {fileID: 1526588327}
@@ -34330,7 +34345,7 @@ MonoBehaviour:
   evacPoint: {fileID: 0}
   moveSpeed: 3
   newAngle: 120
-  newFOVRadius: 7
+  newFOVRadius: 25
   newCanWander: 0
 --- !u!114 &1526588328
 MonoBehaviour:
@@ -34360,7 +34375,7 @@ MonoBehaviour:
   weaponData: {fileID: 11400000, guid: ebf2cb75b8d9a9d4dab68bd815af79db, type: 2}
   rightHandTransform: {fileID: 566402113}
   weaponHolster: {fileID: 265167495}
---- !u!114 &1526588331
+--- !u!114 &1526588330
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -34369,21 +34384,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 1526588324}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed959b9dac57ae84a95222d627c412fa, type: 3}
+  m_Script: {fileID: 11500000, guid: cebf6cc06c323ff4e975cb8d0ecef6fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  state: 0
   humanClass: {fileID: 11400000, guid: 811f7ba616d6f7043a66a9610a66d5ef, type: 2}
   canWander: 1
   width: 10
   length: 10
-  canIdle: 0
+  dwellTime: 10
   patrolPath: {fileID: 0}
   pathRadius: 1.4
-  dwellTime: 3
   shoutDistance: 10
-  evacPoint: {fileID: 5153133265702016717}
-  demonCatSightTimerMax: 10
-  wakeUpDelay: 4
+  SusTimer: 30
+  wakeUpDelay: 5
 --- !u!114 &1526588332
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34396,7 +34410,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffbe634dcbffb574fb9c82c02e8d0dc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 7
+  radius: 20
   angle: 100
   playerRef: {fileID: 0}
   playerMask:
@@ -35805,14 +35819,14 @@ GameObject:
   - component: {fileID: 1581621248}
   - component: {fileID: 1581621247}
   - component: {fileID: 1581621246}
-  - component: {fileID: 1581621245}
   - component: {fileID: 1581621243}
+  - component: {fileID: 1581621244}
   - component: {fileID: 1581621242}
   - component: {fileID: 1581621241}
   - component: {fileID: 1581621240}
   - component: {fileID: 1581621239}
   m_Layer: 9
-  m_Name: Test Hooman (6)
+  m_Name: Civilian Controller
   m_TagString: Human
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -35865,7 +35879,7 @@ MonoBehaviour:
   evacPoint: {fileID: 0}
   moveSpeed: 3
   newAngle: 120
-  newFOVRadius: 7
+  newFOVRadius: 25
   newCanWander: 0
 --- !u!114 &1581621242
 MonoBehaviour:
@@ -35895,7 +35909,7 @@ MonoBehaviour:
   weaponData: {fileID: 11400000, guid: ebf2cb75b8d9a9d4dab68bd815af79db, type: 2}
   rightHandTransform: {fileID: 1748167495}
   weaponHolster: {fileID: 1813366248}
---- !u!114 &1581621245
+--- !u!114 &1581621244
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -35904,21 +35918,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 1581621238}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed959b9dac57ae84a95222d627c412fa, type: 3}
+  m_Script: {fileID: 11500000, guid: cebf6cc06c323ff4e975cb8d0ecef6fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  state: 0
   humanClass: {fileID: 11400000, guid: 811f7ba616d6f7043a66a9610a66d5ef, type: 2}
-  canWander: 1
+  canWander: 0
   width: 10
   length: 10
-  canIdle: 0
-  patrolPath: {fileID: 0}
+  dwellTime: 10
+  patrolPath: {fileID: 915060731}
   pathRadius: 1.4
-  dwellTime: 3
   shoutDistance: 10
-  evacPoint: {fileID: 5153133265702016717}
-  demonCatSightTimerMax: 10
-  wakeUpDelay: 4
+  SusTimer: 30
+  wakeUpDelay: 5
 --- !u!114 &1581621246
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -35931,7 +35944,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffbe634dcbffb574fb9c82c02e8d0dc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 7
+  radius: 20
   angle: 100
   playerRef: {fileID: 0}
   playerMask:
@@ -41084,7 +41097,7 @@ Transform:
   - {fileID: 899505288}
   - {fileID: 705507995}
   - {fileID: 277330279}
-  - {fileID: 5153133265702016717}
+  - {fileID: 2115549902}
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -45413,6 +45426,7 @@ GameObject:
   - component: {fileID: 2028274342}
   - component: {fileID: 2028274344}
   - component: {fileID: 2028274345}
+  - component: {fileID: 2028274346}
   m_Layer: 6
   m_Name: Main Camera
   m_TagString: Untagged
@@ -45522,6 +45536,20 @@ RotationConstraint:
   m_Sources:
   - sourceTransform: {fileID: 187924451}
     weight: 1
+--- !u!114 &2028274346
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2028274340}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 214bb2908aa918b4c9e15dce29873873, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentlyInTheWay: []
+  currentlyTransparent: []
 --- !u!1 &2039784870
 GameObject:
   m_ObjectHideFlags: 0
@@ -46223,6 +46251,37 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.002500002, y: 0.39909717, z: 0.049999993}
   m_Center: {x: -0.05972925, y: 0.000000059604645, z: 0.077499986}
+--- !u!1 &2115549901
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2115549902}
+  m_Layer: 0
+  m_Name: Evac Points
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2115549902
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2115549901}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 5153133265702016717}
+  m_Father: {fileID: 1843938353}
+  m_RootOrder: 11
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2122115097
 GameObject:
   m_ObjectHideFlags: 0
@@ -47714,7 +47773,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffbe634dcbffb574fb9c82c02e8d0dc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 7
+  radius: 20
   angle: 100
   playerRef: {fileID: 0}
   playerMask:
@@ -47803,45 +47862,20 @@ GameObject:
   - component: {fileID: 5140277844647181830}
   - component: {fileID: 5140277844647181833}
   - component: {fileID: 5140277844647181832}
-  - component: {fileID: 5140277844647181840}
+  - component: {fileID: 5140277844647181842}
   - component: {fileID: 5140277844647181834}
   - component: {fileID: 5140277844647181837}
   - component: {fileID: 5140277844647181836}
   - component: {fileID: 77987880}
   - component: {fileID: 77987869}
   - component: {fileID: 5140277844647181841}
-  - component: {fileID: 5140277844647181842}
   m_Layer: 9
-  m_Name: Better Hooman
+  m_Name: Security
   m_TagString: Human
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &5140277844647181840
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5140277844647181839}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed959b9dac57ae84a95222d627c412fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  humanClass: {fileID: 11400000, guid: 0e4d4a614ef98ff45886d9fdfe4af524, type: 2}
-  canWander: 0
-  width: 10
-  length: 10
-  canIdle: 0
-  patrolPath: {fileID: 699590761}
-  pathRadius: 1.4
-  dwellTime: 3
-  shoutDistance: 10
-  evacPoint: {fileID: 0}
-  demonCatSightTimerMax: 15
-  wakeUpDelay: 4
 --- !u!114 &5140277844647181841
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -47857,112 +47891,39 @@ MonoBehaviour:
   walkSpd: 2
   sprintSpd: 4
   stopBuffer: 0.3
---- !u!82 &5140277844647181842
-AudioSource:
+--- !u!114 &5140277844647181842
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5140277844647181839}
   m_Enabled: 1
-  serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 8b909d31675cdf94e8b45ed9519afba2, type: 3}
-  m_PlayOnAwake: 0
-  m_Volume: 1
-  m_Pitch: 1
-  Loop: 0
-  Mute: 0
-  Spatialize: 0
-  SpatializePostEffects: 0
-  Priority: 128
-  DopplerLevel: 1
-  MinDistance: 1
-  MaxDistance: 500
-  Pan2D: 0
-  rolloffMode: 0
-  BypassEffects: 0
-  BypassListenerEffects: 0
-  BypassReverbZones: 0
-  rolloffCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  panLevelCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  spreadCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  reverbZoneMixCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cebf6cc06c323ff4e975cb8d0ecef6fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  state: 0
+  humanClass: {fileID: 11400000, guid: 0e4d4a614ef98ff45886d9fdfe4af524, type: 2}
+  canWander: 0
+  width: 10
+  length: 10
+  dwellTime: 3
+  patrolPath: {fileID: 699590761}
+  pathRadius: 1.4
+  shoutDistance: 10
+  SusTimer: 30
+  wakeUpDelay: 5
 --- !u!1001 &5153133265702016716
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 1843938353}
+    m_TransformParent: {fileID: 2115549902}
     m_Modifications:
     - target: {fileID: 1895655492408911053, guid: 33dedbadbb6f9f548b26ca59cd0d45bb, type: 3}
       propertyPath: m_RootOrder
-      value: 11
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1895655492408911053, guid: 33dedbadbb6f9f548b26ca59cd0d45bb, type: 3}
       propertyPath: m_LocalPosition.x
@@ -48081,7 +48042,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5140277844647181839}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 18.34, y: 0, z: -7.86}
+  m_LocalPosition: {x: -22.5, y: 0, z: -23.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6967296851671024397}

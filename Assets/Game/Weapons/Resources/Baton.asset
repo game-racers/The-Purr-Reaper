@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Baton
   m_EditorClassIdentifier: 
   damage: 1
-  weaponRange: 4
+  weaponRange: 2
   equipPrefab: {fileID: 5674904460665305567, guid: 4601595e8405e744faffa3ba713e6cf0, type: 3}

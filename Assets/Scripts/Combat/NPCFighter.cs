@@ -24,9 +24,10 @@ namespace gameracers.Combat
             weaponRange = weaponData.weaponRange;
             heldWeapon = Spawn(weaponData.equipPrefab, rightHandTransform, false);
             holsteredWeapon = Spawn(weaponData.equipPrefab, weaponHolster, true);
+            heldWeapon.tag = gameObject.tag;
         }
 
-        void Update()
+        void UpdateAttack()
         {
             if (Time.time - timeSinceLastAttack < timeBetweenAttacks) return;
 
@@ -55,7 +56,6 @@ namespace gameracers.Combat
 
         private void AttackBehaviour()
         {
-            transform.LookAt(target.transform);
 
             if (Time.time - timeSinceLastAttack > timeBetweenAttacks)
             {
@@ -112,6 +112,7 @@ namespace gameracers.Combat
             }
             GetComponent<ActionScheduler>().StartAction(this);
             target = combatTarget.GetComponent<Health>();
+            UpdateAttack();
         }
 
         public void EndAttack()
@@ -131,7 +132,7 @@ namespace gameracers.Combat
         {
             GetComponent<Animator>().ResetTrigger("attack");
             GetComponent<Animator>().SetTrigger("stopAttack");
-            StopHit();
+            //StopHit();
         }
     }
 }

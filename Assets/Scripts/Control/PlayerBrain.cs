@@ -126,7 +126,7 @@ namespace gameracers.Control
                 transform.position = new Vector3(0f, -10f, 0f);
                 GetComponent<CapsuleCollider>().enabled = true;
             }
-            possessedEntity.GetComponent<HumanBrain>().enabled = !enabled;
+            possessedEntity.GetComponent<HumanController>().enabled = !enabled;
             possessedEntity.GetComponent<PossessedController>().enabled = enabled;
             possessedEntity.GetComponent<PossessedController>().PossessState(enabled);
             canPossess = !enabled;

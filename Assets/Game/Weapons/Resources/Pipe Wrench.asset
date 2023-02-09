@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Pipe Wrench
   m_EditorClassIdentifier: 
   damage: 1
-  weaponRange: 4
+  weaponRange: 2
   equipPrefab: {fileID: 8453957690225870174, guid: 486597d223978e14a9e69a7e20ef5a0b, type: 3}

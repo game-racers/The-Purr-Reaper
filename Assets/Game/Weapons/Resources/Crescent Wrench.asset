@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Crescent Wrench
   m_EditorClassIdentifier: 
   damage: 1
-  weaponRange: 4
+  weaponRange: 2
   equipPrefab: {fileID: 6275202234650691801, guid: 1ac1a70812441054ab57b1a272a2d801, type: 3}

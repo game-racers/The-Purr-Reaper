@@ -30,9 +30,9 @@ namespace gameracers.Core
         public class BuildingOccupant
         {
             public string buildingID;
-            public GameObject personObj;
+            public HumanController personObj;
 
-            public BuildingOccupant(string buildingID, GameObject personObj)
+            public BuildingOccupant(string buildingID, HumanController personObj)
             {
                 this.buildingID = buildingID;
                 this.personObj = personObj;
@@ -44,6 +44,7 @@ namespace gameracers.Core
             EventListener.onCrossThreshold += EntityCrossThreshold;
             EventListener.onQuest += QuestComplete;
             EventListener.onPause += Pausing;
+            EventListener.onDemonButton += DemonButton;
         }
 
         private void OnDisable()
@@ -51,6 +52,7 @@ namespace gameracers.Core
             EventListener.onCrossThreshold -= EntityCrossThreshold;
             EventListener.onQuest -= QuestComplete;
             EventListener.onPause -= Pausing;
+            EventListener.onDemonButton -= DemonButton;
         }
 
         private void EntityCrossThreshold(GameObject entity, GameObject building, bool isEnter)
@@ -59,11 +61,15 @@ namespace gameracers.Core
             {
                 return;
             }
+
             if (isEnter == true)
             {
-                BuildingOccupant person = new BuildingOccupant(building.GetComponent<Building>().GetBuildingID(), entity);
-                occupants.Add(person);
-                outsidePeople.Remove(entity);
+                if (entity.GetComponent<HumanController>() != null)
+                {
+                    BuildingOccupant person = new BuildingOccupant(building.GetComponent<Building>().GetBuildingID(), entity.GetComponent<HumanController>());
+                    occupants.Add(person);
+                    outsidePeople.Remove(entity);
+                }
             }
             if (isEnter == false)
             {
@@ -93,6 +99,15 @@ namespace gameracers.Core
                 UpdateGameState(GameState.Pause);
             else
                 UpdateGameState(GameState.Play);
+        }
+
+        private void DemonButton(string id)
+        {
+            foreach (BuildingOccupant bo in occupants)
+            {
+                if (bo.buildingID == id)
+                    bo.personObj.SetDemonAlert();
+            }
         }
 
         void Awake()
@@ -207,7 +222,7 @@ namespace gameracers.Core
         }
     }
 
-        public enum GameState
+    public enum GameState
     {
         Spawning, //Player Spawns and controls disabled during spawn anim and intro duration as camera flies around
         Play,

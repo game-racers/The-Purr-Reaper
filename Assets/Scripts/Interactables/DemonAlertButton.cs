@@ -1,33 +1,36 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using gameracers.Architecture;
 
-public class DemonAlertButton : MonoBehaviour
-{
-    [SerializeField] GameObject alertLight;
-    [SerializeField] int buttonID;
-
-    private void OnEnable()
+namespace gameracers.Interactables
+{ 
+    public class DemonAlertButton : MonoBehaviour
     {
-        EventListener.onDemonButton += SetDemonAlert;
-    }
+        [SerializeField] GameObject alertLight;
 
-    private void OnDisable()
-    {
-        EventListener.onDemonButton -= SetDemonAlert;
-    }
-
-    private void SetDemonAlert(int id)
-    {
-        if (buttonID == id)
+        private void OnEnable()
         {
-            //animator switch states
+            EventListener.onDemonButton += SetDemonAlert;
         }
-        alertLight.gameObject.SetActive(true);
-    }
 
-    public int GetButtonID()
-    {
-        return buttonID;
+        private void OnDisable()
+        {
+            EventListener.onDemonButton -= SetDemonAlert;
+        }
+
+        private void SetDemonAlert(string id)
+        {
+            if (id == transform.parent.parent.GetComponent<Building>().GetBuildingID())
+            {
+                //animator switch states
+                alertLight.SetActive(true);
+            }
+        }
+
+        public string GetButtonID()
+        {
+            return transform.parent.parent.GetComponent<Building>().GetBuildingID();
+        }
     }
 }

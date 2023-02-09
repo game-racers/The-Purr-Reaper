@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Flashlight
   m_EditorClassIdentifier: 
   damage: 1
-  weaponRange: 4
+  weaponRange: 2
   equipPrefab: {fileID: 3042152195789799766, guid: 208ea99be56907c4a85fbb824066950a, type: 3}

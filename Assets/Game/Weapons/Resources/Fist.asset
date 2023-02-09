@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Fist
   m_EditorClassIdentifier: 
   damage: 0
-  weaponRange: 0
+  weaponRange: 2
   equipPrefab: {fileID: 8867250697291727554, guid: 31905aa655b609848a992a3c62dbf9d2, type: 3}

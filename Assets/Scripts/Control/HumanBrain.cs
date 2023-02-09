@@ -5,6 +5,7 @@ using gameracers.Core;
 using gameracers.Movement;
 using gameracers.NPCStuff;
 using gameracers.Stats;
+using gameracers.Interactables;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
@@ -13,13 +14,16 @@ using UnityEngine;
 
 namespace gameracers.Control
 {
-    public class HumanBrain : MonoBehaviour
+    public class HumanBrain : MonoBehaviour 
     {
+        // Default is Civilian
+
         Health health;
         NPCMover mover;
         NPCFighter fighter;
         FieldOfView fov;
         GameObject player;
+        [SerializeField ]HumanState state = HumanState.Work;
 
         [SerializeField] HumanDataSO humanClass;
         // Human Class variables
@@ -39,7 +43,6 @@ namespace gameracers.Control
         float wanderTimer;
 
         // Idle
-        [SerializeField] bool canIdle = false;
         Quaternion originalRot;
 
         // Patrol 
@@ -47,6 +50,7 @@ namespace gameracers.Control
         [SerializeField] float pathRadius = 1.4f;
         [SerializeField] float dwellTime = 10f;
         float arrivalTime;
+        int currentWaypointIndex = 0;
 
         // Aggro
         [SerializeField] float shoutDistance = 10f;
@@ -61,7 +65,6 @@ namespace gameracers.Control
         [SerializeField] float demonCatSightTimerMax = 10f;
 
         Vector3 humanPos;
-        int currentWaypointIndex = 0;
         GameObject myBuilding;
         Floor myFloor;
 
@@ -73,6 +76,9 @@ namespace gameracers.Control
         float foundTimer;
         bool demonAlert = false;
         DemonAlertButton toButton;
+        //possibly one for all timer?
+        float oneTimer;
+
 
         private void OnEnable()
         {
@@ -110,7 +116,7 @@ namespace gameracers.Control
                     }
                     else
                     {
-                        mover.StartMoveAction(evacPoint.transform.position, sprintSpeed);
+                        SetState(HumanState.Evacuate);
                     }
                 } 
             }
@@ -137,7 +143,7 @@ namespace gameracers.Control
             }
         }
 
-        private void SetDemonAlert(int id)
+        private void SetDemonAlert(string id)
         {
             // add timer implementation for slight randomness of preparedness in people. 
             Aggravate();
@@ -173,21 +179,49 @@ namespace gameracers.Control
         {
             if (health.GetDead())
             {
-                if (hasBeenFound) return;
-                if (foundTimer == 0f) return;
-                if (Time.time - foundTimer > 60f) hasBeenFound = true;
+                Dead();
                 return;
             }
 
             if (health.GetKO())
             {
+                // when KOed, reset oneTimer to -Infinity
+                if (Time.time - oneTimer >= wakeUpDelay)
+                    SetState(HumanState.Alert);
                 return;
             }
 
-            if (Time.time - wakeUpTime < wakeUpDelay)
-                return;
-
             fov.FieldOfViewCheck();
+
+            if (fov.CanSeeKO())
+            {
+                SetState(HumanState.Help);
+            }
+
+
+            // Work, Alert, Help, Chase, RunAway, Hiding, Evacuate, KO, Dead
+            switch (state)
+            {
+                case HumanState.Work:
+                    break;
+                case HumanState.Alert:
+                    break;
+                case HumanState.Help:
+                    break;
+                case HumanState.SeesCat:
+                    break;
+                case HumanState.Evacuate:
+                    mover.StartMoveAction(evacPoint.transform.position, sprintSpeed);
+                    Debug.Log("Save Yourselves!");
+                    break;
+                case HumanState.KO:
+                    if (Time.time - oneTimer >= wakeUpDelay)
+                        SetState(HumanState.Alert);
+                    return;
+                case HumanState.Dead:
+                    Dead();
+                    return;
+            }
 
             // Passive
             if (aggravate == false)
@@ -198,7 +232,7 @@ namespace gameracers.Control
                 if (fov.GetPlayerVisibility() && fov.GetCatForm())
                 {
                     SetWitness();
-                    UpdateSuspicion();
+                    //UpdateSuspicion();
                     return;
                 }
 
@@ -206,10 +240,27 @@ namespace gameracers.Control
                 return;
             }
 
+            if (isGuard == true)
+            {
+                if (fov.CanSeeKO())
+                {
+                    SetWanderArea(transform.position);
+                    Wander();
+                }
+                else if (fov.CanSeeDead() && !fov.IsAccounted())
+                {
+                    SetWanderArea(transform.position);
+                    Wander();
+                }
+                else if (!fov.GetPlayerVisibility() || !fov.GetCatForm())
+                {
+                    SetWitness();
+                    Work();
+                }
+            }
+
             if (aggravate == true)
             {
-
-                // Panic
                 if (isGuard == false)
                 {
                     if (canAttack == true)
@@ -243,12 +294,16 @@ namespace gameracers.Control
                         if (toButton != null) return;
                         PeacefulPanic();
                     }
-
                     return;
                 }
 
                 if (isGuard == true)
                 {
+                    if (demonAlert == false)
+                    {
+                        PullDemonSwitch();
+                    }
+
                     if (fov.GetPlayerVisibility() && fov.GetCatForm())
                     {
                         UpdateSuspicion();
@@ -261,37 +316,35 @@ namespace gameracers.Control
                     {
                         Wander();
                     }
-                    else
-                    {
-                        if (fov.CanSeeKO())
-                        {
-                            if (unconsciousBody == null)
-                                unconsciousBody = fov.GetBody();
-
-                            if (unconsciousBody != null)
-                                mover.StartMoveAction(unconsciousBody.transform.position, sprintSpeed);
-
-                            if (AtTargetPoint(unconsciousBody.transform.position))
-                            {
-                                // trigger animation
-                                unconsciousBody.GetComponent<HumanBrain>().Heal();
-                                unconsciousBody = null;
-                            }
-                            return;
-                        }
-                        if (fov.CanSeeDead() && !fov.IsAccounted())
-                        {
-                            SetWanderArea(transform.position);
-                            Wander();
-                        }
-                        if (!fov.GetPlayerVisibility() || !fov.GetCatForm())
-                        {
-                            SetWitness();
-                            Work();
-                        }
-                    }
                 }
             }
+        }
+
+        private void Dead()
+        {
+            if (hasBeenFound) return;
+            if (oneTimer == 0f) return;
+            if (Time.time - oneTimer > 60f) hasBeenFound = true;
+            return;
+        }
+
+        private void HelpThem()
+        {
+            if (unconsciousBody == null)
+                unconsciousBody = fov.GetBody();
+
+            if (unconsciousBody != null)
+                mover.StartMoveAction(unconsciousBody.transform.position, sprintSpeed);
+
+            if (AtTargetPoint(unconsciousBody.transform.position))
+            {
+                // trigger animation
+                unconsciousBody.GetComponent<HumanBrain>().Heal();
+                unconsciousBody = null;
+                SetWitness();
+                UpdateSuspicion();
+            }
+            return;
         }
 
         private void CheckForDead()
@@ -302,7 +355,6 @@ namespace gameracers.Control
                 AggravateNearbyEnemies();
                 moveSpeed = sprintSpeed;
                 GetComponent<ActionScheduler>().CancelCurrentAction();
-                Debug.Log(unconsciousBody);
                 if (unconsciousBody != null)
                     mover.StartMoveAction(unconsciousBody.transform.position, sprintSpeed);
             }
@@ -348,6 +400,7 @@ namespace gameracers.Control
             wanderTarget = lastKnownPos;
             aggravate = true;
             demonCatSightTimer = Time.time;
+            oneTimer = Time.time;
         }
 
         private void Work()
@@ -383,13 +436,14 @@ namespace gameracers.Control
             {
                 if (AtTargetPoint(GetCurrentWaypoint()))
                 {
-                    arrivalTime = Time.time;
+                    wanderTimer = Time.time;
+                    //oneTimer = Time.time;
                     CycleWaypoint();
                 }
                 nextPos = GetCurrentWaypoint();
             }
 
-            if (Time.time - arrivalTime > dwellTime)
+            if (Time.time - wanderTimer > dwellTime)
             {
                 mover.StartMoveAction(nextPos, moveSpeed);
             }
@@ -411,6 +465,7 @@ namespace gameracers.Control
                 GetComponent<ActionScheduler>().CancelCurrentAction();
                 mover.StartMoveAction(wanderTarget, moveSpeed);
                 wanderTimer = 0;
+                oneTimer = 0;
             }
         }
 
@@ -465,16 +520,6 @@ namespace gameracers.Control
             float distToCat = Vector3.Distance(transform.position, player.transform.position);
             if (Mathf.Abs(transform.position.y - player.transform.position.y) < 4 && distToCat < 10f)
             {
-                // Might be unnecessary
-                //if (floorSpots.Count == 0)
-                //{
-                //    Debug.Log("just flippin' run away");
-                //    Vector3 runAwayPoint = new Vector3(transform.position.x - player.transform.position.x, transform.position.y, transform.position.z - player.transform.position.z);
-                //    mover.StartMoveAction(runAwayPoint, sprintSpeed);
-                //    hidePoint = Vector3.zero;
-                //    return;
-                //}
-
                 Vector2 humanPos = new Vector2(transform.position.x, transform.position.z);
                 Vector2 catPos = new Vector2(player.transform.position.x, player.transform.position.z);
                 Vector3 tempHidePoint = new Vector3();
@@ -592,7 +637,8 @@ namespace gameracers.Control
                 }
             }
         }
-
+        
+        // Patrol functions
         private bool AtTargetPoint(Vector3 target)
         {
             float distanceToPoint = Vector3.Distance(transform.position, target);
@@ -643,13 +689,6 @@ namespace gameracers.Control
             GetComponent<ActionScheduler>().CancelCurrentAction();
         }
 
-        //public void Hide(Vector3 hidePos)
-        //{
-        //    hidePoint = hidePos;
-        //    GetComponent<ActionScheduler>().CancelCurrentAction();
-        //    mover.StartMoveAction(hidePos, sprintSpeed);
-        //}
-
         public void SetAttack(bool defendOneself)
         {
             if (defendOneself == true)
@@ -668,11 +707,7 @@ namespace gameracers.Control
             if (hasBeenFound == true) return;
 
             foundTimer = Time.time;
-        }
-
-        public void TriggerFoundKO(GameObject body)
-        {
-            unconsciousBody = body;
+            oneTimer = Time.time;
         }
 
         public bool GetFound()
@@ -686,6 +721,24 @@ namespace gameracers.Control
                 GetComponent<Animator>().SetTrigger("awake");
             health.Heal();
             wakeUpTime = Time.time;
+            oneTimer = Time.time;
         }
+
+        public void SetState(HumanState newState)
+        {
+            state = newState;
+        }
+        public enum HumanState
+        {
+            Work, // Normal State
+            Suspicious, // When the human sees something but not fully on Alert, is timed
+            Alert, // Behavior Changes, searching for demonic behaviours, might be timed
+            Help, // Inspect body on ground and if able, heal and awaken them, goes to alert
+            SeesCat, // Reaction to seeing Cat, either hide and stay safe or attack and chase
+            Evacuate, // Run towards evac point
+            KO, // is KO, if is healed, waits until timer resets to change state
+            Dead, // dead 
+        }
+
     }
 }

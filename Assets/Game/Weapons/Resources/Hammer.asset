@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Hammer
   m_EditorClassIdentifier: 
   damage: 1
-  weaponRange: 4
+  weaponRange: 2
   equipPrefab: {fileID: 7832270621184364008, guid: 011c79dd7e837c644a8602dcd5d85169, type: 3}

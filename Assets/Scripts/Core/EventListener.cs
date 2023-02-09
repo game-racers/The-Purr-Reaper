@@ -10,7 +10,7 @@ public class EventListener : MonoBehaviour
     public delegate void OnNewFloor(GameObject entity, GameObject floor, bool isEnter);
     public static event OnNewFloor onNewFloor;
 
-    public delegate void OnDemonButton(int buttonID);
+    public delegate void OnDemonButton(string buttonID);
     public static event OnDemonButton onDemonButton;
 
     public delegate void OnJump(List<Vector3> jumpPts);
@@ -40,7 +40,7 @@ public class EventListener : MonoBehaviour
             onNewFloor(entity, floor, isEnter);
     }
 
-    public static void DemonButton(int buttonID)
+    public static void DemonButton(string buttonID)
     {
         if (onDemonButton != null)
             onDemonButton(buttonID);

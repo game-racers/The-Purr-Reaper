@@ -11,6 +11,7 @@ namespace gameracers.Combat
 
         private void OnTriggerEnter(Collider other)
         {
+            if (other.gameObject.tag == gameObject.tag) return;
             if (other.gameObject.GetComponent<Health>() != null)
             {
                 other.gameObject.GetComponent<Health>().TakeDamage(weapon.damage);
