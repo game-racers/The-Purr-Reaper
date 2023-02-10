@@ -13,6 +13,7 @@ namespace gameracers.Control
         public float sprintSpd = 8;
         public bool canAttack = false;
         public bool isGuard = false;
+        public float reactionTime = 3f;
 
         [SerializeField] public List<GameObject> hats;
         [SerializeField] public List<GameObject> shirts;

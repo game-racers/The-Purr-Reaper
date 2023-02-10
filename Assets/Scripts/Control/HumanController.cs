@@ -9,14 +9,13 @@ using gameracers.Interactables;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static gameracers.Control.HumanBrain;
+using UnityEngine.AI;
 
 namespace gameracers.Control
 {
     public class HumanController : MonoBehaviour
     {
         // Default is Civilian
-
         Health health;
         NPCMover mover;
         NPCFighter fighter;
@@ -48,6 +47,7 @@ namespace gameracers.Control
         Transform evacPoint;
         List<HidingSpot> floorSpots = new List<HidingSpot>();
         [SerializeField] float SusTimer = 30f;
+        float reactionTime = 3f;
 
         GameObject myBuilding;
         Floor myFloor;
@@ -58,6 +58,7 @@ namespace gameracers.Control
         bool hasBeenFound = false;
         DemonAlertButton toButton;
         bool demonAlert;
+        bool knowsCatsAlt = false;
 
         // Idle
         Quaternion originalRot;
@@ -70,6 +71,7 @@ namespace gameracers.Control
 
         // Timers
         float mainTimer;
+        float secondTimer;
 
 
         bool isHiding;
@@ -153,6 +155,7 @@ namespace gameracers.Control
             moveSpeed = humanClass.moveSpeed;
             sprintSpeed = humanClass.sprintSpd;
             canAttack = humanClass.canAttack;
+            reactionTime = humanClass.reactionTime;
             #endregion
         }
 
@@ -171,6 +174,8 @@ namespace gameracers.Control
             }
 
             fov.FieldOfViewCheck();
+
+            if (Time.time - secondTimer < reactionTime) return;
 
             CheckForBodies();
 
@@ -206,10 +211,10 @@ namespace gameracers.Control
             }
         }
 
-        #region Generic Update Functions
+        #region Generic Functions
         private void CanSeeDemonCat()
         {
-            if (fov.GetPlayerVisibility() && fov.GetCatForm())
+            if (fov.GetPlayerVisibility() && (fov.GetCatForm() || knowsCatsAlt))
             {
                 lastKnownPos = player.transform.position; 
                 SetWitness();
@@ -250,6 +255,53 @@ namespace gameracers.Control
                 if (GetComponent<NPCWitness>() != null)
                 {
                     SetWitness();
+                }
+            }
+        }
+
+        private void UpdateSuspicion()
+        {
+            targetPos = transform.position;
+            Aggravate();
+            AggravateNearbyEnemies();
+            mainTimer = Time.time;
+        }
+
+        private void SetWitness()
+        {
+            NPCWitness witSet = GetComponent<NPCWitness>();
+            if (witSet.newPath != null)
+            {
+                patrolPath = witSet.newPath;
+            }
+            if (witSet.newIdle != null)
+            {
+                wanderCenter = witSet.newIdle.position;
+            }
+            fov.radius = witSet.newFOVRadius;
+            fov.angle = witSet.newAngle;
+            canWander = witSet.newCanWander;
+            moveSpeed = witSet.moveSpeed;
+            if (witSet.evacPoint != null)
+            {
+                evacPoint = witSet.evacPoint;
+            }
+        }
+
+        private void AggravateNearbyEnemies()
+        {
+            // figure out how to make sphere less vertical
+            RaycastHit[] hits = Physics.SphereCastAll(transform.position, shoutDistance, Vector3.up, 0);
+            foreach (RaycastHit hit in hits)
+            {
+                if (hit.collider.GetComponent<HumanController>() != null)
+                {
+                    HumanController ai = hit.collider.GetComponent<HumanController>();
+                    if (ai.enabled == false) continue;
+                    if (ai.GetComponent<Health>().GetDead() == true) continue;
+                    if (ai.GetAggravate()) continue;
+
+                    ai.Aggravate();
                 }
             }
         }
@@ -321,9 +373,19 @@ namespace gameracers.Control
 
             if (Time.time - mainTimer > dwellTime)
             {
-                float wanderx = wanderCenter.x + Random.Range(-width, width);
-                float wanderz = wanderCenter.z + Random.Range(-length, length);
-                targetPos = new Vector3(wanderx, transform.position.y, wanderz);
+                NavMeshHit hit;
+                targetPos = Vector3.zero;
+                while (targetPos == Vector3.zero)
+                {
+                    float wanderx = wanderCenter.x + Random.Range(-width, width);
+                    float wanderz = wanderCenter.z + Random.Range(-length, length);
+                    if (NavMesh.SamplePosition(new Vector3(wanderx, transform.position.y, wanderz), out hit, 1f, NavMesh.AllAreas))
+                    {
+                        NavMeshPath path = new NavMeshPath();
+                        if (NavMesh.CalculatePath(transform.position, hit.position, NavMesh.AllAreas, path))
+                            targetPos = path.corners[path.corners.Length - 1];
+                    }
+                }
 
                 mover.StartMoveAction(targetPos, moveSpeed);
                 mainTimer = 0;
@@ -352,6 +414,7 @@ namespace gameracers.Control
         #region Suspicious Functions
         private void Suspicious()
         {
+            // Do a double take, aka look at last known pos, and have a bar slowly fill up. Move closer after double take to investigate. The duration of suspicion is based on how full the bar gets. 
             Wander();
             if (Time.time - mainTimer > SusTimer)
                 SetState(HuumanState.Work);
@@ -461,8 +524,6 @@ namespace gameracers.Control
                 }
             }
 
-            // TODO: if first floor, exit by any means
-
             // Arrival at Hidepoint
             if (hidePoint != Vector3.zero)
             {
@@ -480,82 +541,124 @@ namespace gameracers.Control
                         }
                         return;
                     }
-                    else
-                        mover.StartMoveAction(hidePoint, sprintSpeed);
+                    //else
+                    //    mover.StartMoveAction(hidePoint, sprintSpeed);
                     return;
                 }
             }
 
-            // Run away from cat!
-            float distToCat = Vector3.Distance(transform.position, player.transform.position);
-            if (Mathf.Abs(transform.position.y - player.transform.position.y) < 4f && distToCat < 10f)
+            float distToCat = Vector3.Distance(transform.position, lastKnownPos);
+
+            Vector3 tempHidePoint = Vector3.zero;
+            float distToHide = Mathf.Infinity;
+            #region Run Away, Cat on floor AND nearby
+            if (Mathf.Abs(transform.position.y - lastKnownPos.y) < 2f && distToCat < 20f)
             {
-                Vector3 tempHidePoint = new Vector3();
+                // Find a hide spot and test if angles > 90 between lastKnownPos, human, hidingspot
                 foreach (HidingSpot spot in floorSpots)
                 {
-                    Vector2 hitPos = new Vector2(spot.transform.position.x, spot.transform.position.z);
-                    if (Vector2.Angle(new Vector2(0, 0), new Vector2(0, 0)) > 90f)
+                    if (Vector3.Angle(lastKnownPos - transform.position,
+                        spot.transform.position - transform.position) > 90f)
                     {
-                        tempHidePoint = spot.GetPoint();
+                        if (Vector3.Distance(transform.position, spot.transform.position) < distToHide)
+                        {
+                            tempHidePoint = spot.GetPoint();
+                            distToHide = Vector3.Distance(transform.position, spot.transform.position);
+                        }
+                    }
+                }
+                if (tempHidePoint != Vector3.zero)
+                {
+                    hidePoint = tempHidePoint;
+                    mover.StartMoveAction(hidePoint, sprintSpeed);
+                    return;
+                }
+
+
+                // Find a downward stairwell and test if angles > 90 between lastKnownPos, human, stairwell
+                if (myFloor != null)
+                {
+                    foreach (Stairs stair in myFloor.GetStairs())
+                    {
+                        if (stair.IsDownStairs(transform.position.y))
+                        {
+                            if (Vector3.Angle(lastKnownPos - transform.position,
+                                stair.GetStairsPoint(true) - transform.position) > 90f)
+                            {
+                                if (Vector3.Distance(transform.position, stair.GetStairsPoint(true)) < distToHide)
+                                {
+                                    tempHidePoint = stair.GetStairsPoint(false);
+                                    distToHide = Vector3.Distance(transform.position, stair.GetStairsPoint(true));
+                                }
+                            }
+                        }
+                    }
+                    if (tempHidePoint == Vector3.zero)
+                    {
                         hidePoint = tempHidePoint;
-                        mover.StartMoveAction(tempHidePoint, sprintSpeed);
+                        mover.StartMoveAction(hidePoint, sprintSpeed);
                         return;
                     }
                 }
 
-                if (tempHidePoint == new Vector3())
+                // If all else fails, run away!
+                tempHidePoint = transform.position - lastKnownPos;
+                mover.StartMoveAction(transform.position + tempHidePoint, sprintSpeed);
+                hidePoint = Vector3.zero;
+                return;
+            }
+            #endregion
+
+            #region Run Away, Cat NOT on floor OR nearby
+            // Go to nearest hiding spot on floor
+            foreach (HidingSpot spot in floorSpots)
+            {
+                if (Vector3.Distance(transform.position, spot.transform.position) < distToHide)
                 {
-                    Vector3 runAwayPoint = new Vector3(transform.position.x - player.transform.position.x, transform.position.y, transform.position.z - player.transform.position.z);
-                    mover.StartMoveAction(runAwayPoint, sprintSpeed);
-                    hidePoint = Vector3.zero;
-                    return;
+                    tempHidePoint = spot.GetPoint();
+                    distToHide = Vector3.Distance(transform.position, spot.transform.position);
                 }
-
-                /* if (pov.SeesStairs())
-                 *      if (stairs.downstairs)
-                 *          StartMoveAction(stairs.GetPoint)
-                 *  
-                 *  if (pov.SeesExit())
-                 *      StartMoveAction(exit)
-                 */
-
+            }
+            if (tempHidePoint != Vector3.zero)
+            {
+                hidePoint = tempHidePoint;
+                mover.StartMoveAction(hidePoint, sprintSpeed);
                 return;
             }
 
-            // go to nearest safe room that isnt full
-            if (hidePoint == Vector3.zero)
+            // Go to nearest downward stairwell
+            if (myFloor != null)
             {
-                if (myBuilding == null)
+                foreach (Stairs stair in myFloor.GetStairs())
                 {
-                    // if closer to evac, evac, if closer to building, that is not alarming, go building
-                    SetState(HuumanState.Evacuate);
-                    return;
-                }
-
-                if (floorSpots.Count == 0)
-                {
-                    SetState(HuumanState.Evacuate);
-                    return;
-                }
-
-                Vector3 tempHidePoint = floorSpots[0].GetPoint();
-                float distToHide = Vector3.Distance(transform.position, floorSpots[0].transform.position);
-                float tempDist;
-
-                for (int i = 1; i < floorSpots.Count; i++)
-                {
-                    tempDist = Vector3.Distance(floorSpots[i].transform.position, transform.position);
-                    if (tempDist < distToHide)
+                    if (stair.IsDownStairs(transform.position.y))
                     {
-                        tempHidePoint = floorSpots[i].GetPoint();
-                        distToHide = tempDist;
+                        if (Vector3.Distance(transform.position, stair.GetStairsPoint(true)) < distToHide)
+                        {
+                            tempHidePoint = stair.GetStairsPoint(false);
+                            distToHide = Vector3.Distance(transform.position, stair.GetStairsPoint(true));
+                        }
                     }
                 }
-
-                // Go to safe room
-                hidePoint = tempHidePoint;
-                mover.StartMoveAction(hidePoint, sprintSpeed);
+                if (tempHidePoint != new Vector3())
+                {
+                    hidePoint = tempHidePoint;
+                    mover.StartMoveAction(hidePoint, sprintSpeed);
+                    return;
+                }
             }
+            #endregion
+
+            if (myBuilding == null)
+            {
+                // if closer to evac, evac, if closer to building that doesnt have cat, go to building
+                SetState(HuumanState.Evacuate);
+                Debug.Log("EVACTUATING THIS POOR INDIVIDUAL SOUL " + gameObject.name);
+                return;
+            }
+            // if all else fails, stay here
+            hidePoint = transform.position;
+            return;
         }
         #endregion
 
@@ -598,15 +701,6 @@ namespace gameracers.Control
         }
         #endregion
 
-
-        private void UpdateSuspicion()
-        {
-            targetPos = transform.position;
-            Aggravate();
-            AggravateNearbyEnemies();
-            mainTimer = Time.time;
-        }
-
         #region Knockout Functions
         private void KOed()
         {
@@ -645,44 +739,6 @@ namespace gameracers.Control
         }
         #endregion
 
-        private void SetWitness()
-        {
-            NPCWitness witSet = GetComponent<NPCWitness>();
-            if (witSet.newPath != null)
-            {
-                patrolPath = witSet.newPath;
-            }
-            if (witSet.newIdle != null)
-            {
-                wanderCenter = witSet.newIdle.position;
-            }
-            fov.radius = witSet.newFOVRadius;
-            fov.angle = witSet.newAngle;
-            canWander = witSet.newCanWander;
-            moveSpeed = witSet.moveSpeed;
-            if (witSet.evacPoint != null)
-            {
-                evacPoint = witSet.evacPoint;
-            }
-        }
-
-        private void AggravateNearbyEnemies()
-        {
-            // figure out how to make sphere less vertical
-            RaycastHit[] hits = Physics.SphereCastAll(transform.position, shoutDistance, Vector3.up, 0);
-            foreach (RaycastHit hit in hits)
-            {
-                if (hit.collider.GetComponent<HumanController>() != null)
-                {
-                    HumanController ai = hit.collider.GetComponent<HumanController>();
-                    if (ai.enabled == false) continue;
-                    if (ai.GetComponent<Health>().GetDead() == true) continue;
-
-                    ai.Aggravate();
-                }
-            }
-        }
-
         #region Animator Events
         void Hit()
         {
@@ -700,6 +756,11 @@ namespace gameracers.Control
         public bool GetFound()
         {
             return hasBeenFound;
+        }
+
+        public bool GetAggravate()
+        {
+            return aggravate;
         }
 
         // Setters
@@ -729,6 +790,7 @@ namespace gameracers.Control
         public void SetState(HuumanState newState)
         {
             if (state == newState) return;
+            secondTimer = Time.time - Random.Range(0, reactionTime);
             state = newState;
         }
         #endregion

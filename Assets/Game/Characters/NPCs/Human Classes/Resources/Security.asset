@@ -17,6 +17,7 @@ MonoBehaviour:
   sprintSpd: 8
   canAttack: 1
   isGuard: 1
+  reactionTime: 1
   hats:
   - {fileID: 8083620724307675805, guid: 2da6f826f070d5c4fa8a7256cb307a48, type: 3}
   shirts:

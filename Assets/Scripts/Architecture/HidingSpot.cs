@@ -10,12 +10,6 @@ namespace gameracers.Architecture
         [SerializeField] string hidingID;
         [SerializeField] int maxPeople = 5;
         List<GameObject> people = new List<GameObject>();
-        GameObject player;
-
-        void Start()
-        {
-            player = GameObject.FindGameObjectWithTag("Player");
-        }
 
         private void OnTriggerEnter(Collider other)
         {
@@ -28,7 +22,7 @@ namespace gameracers.Architecture
             }
 
             // Cat Enters
-            if (GameObject.ReferenceEquals(other.gameObject, player))
+            if (other.gameObject.tag == "Player")
             {
                 //EventListener.CrossHidingSpot(other.gameObject, hidingID, true);
                 return;
@@ -46,7 +40,7 @@ namespace gameracers.Architecture
             }
 
             // Cat Exits
-            if (GameObject.ReferenceEquals(other.gameObject, player))
+            if (other.gameObject.tag == "Player")
             {
                 //EventListener.CrossHidingSpot(other.gameObject, hidingID, false);
                 return;
